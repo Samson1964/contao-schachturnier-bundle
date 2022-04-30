@@ -28,6 +28,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			'keys' => array
 			(
 				'id' => 'primary',
+				'pid' => 'index',
 			)
 		)
 	),
@@ -37,26 +38,15 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 	(
 		'sorting' => array
 		(
-			'mode'                    => 2,
-			'flag'                    => 1,
-			'fields'                  => array('lastname ASC'),
+			'mode'                    => 4,
+			'disableGrouping'         => true,
+			'headerFields'            => array('title'),
+			'fields'                  => array('nummer ASC', 'lastname ASC'),
 			'panelLayout'             => 'filter;sort,search,limit',
-		),
-		'label' => array
-		(
-			'fields'                  => array('lastname', 'firstname', 'nationalPlayer'),
-			'showColumns'             => true,
-			'format'                  => '%s, %s %s',
-			'label_callback'          => array('tl_schachturnier_spieler', 'listPlayers')
+			'child_record_callback'   => array('tl_schachturnier_spieler', 'listPlayers'),  
 		),
 		'global_operations' => array
 		(
-			'competitions' => array
-			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['competitions'],
-				'href'                => 'table=tl_chesscompetition',
-				'icon'                => 'system/modules/chesscompetition/assets/images/icon.png',
-			),  
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -110,16 +100,14 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('addImage', 'death', 'descendant'),
-		'default'                     => '{title_legend},firstname,lastname,title,alias,nationalPlayer;{live_legend:hide},birthday,death;{games_legend:hide},games_count,games_date;{descendant_legend:hide},descendant;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
+		'__selector__'                => array('addImage'),
+		'default'                     => '{name_legend},firstname,lastname,nummer;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Unterpaletten
 	'subpalettes' => array
 	(
-		'addImage'                    => 'singleSRC,alt,size,imagemargin,imageUrl,fullsize,caption,floating',
-		'death'                       => 'deathday',
-		'descendant'                  => 'descendant_id'
+		'addImage'                    => 'singleSRC',
 	),
 
 	// Fields
@@ -128,6 +116,12 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 		'id' => array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL auto_increment"
+		),
+		'pid' => array
+		(
+			'foreignKey'              => 'tl_schachspieler.id',
+			'sql'                     => "int(10) unsigned NOT NULL default '0'",
+			'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
 		),
 		'tstamp' => array
 		(
@@ -155,127 +149,76 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'title' => array
+		'nummer' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['title'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['nummer'],
+			'exclude'                 => true,
+			'search'                  => true,
+			'flag'                    => 1,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'maxlength'           => 4,
+				'rgxp'                => 'digit',
+				'tl_class'            => 'w50'
+			),
+			'load_callback'           => array
+			(
+				array('tl_schachturnier_spieler', 'getNummer')
+			),
+			'save_callback' => array
+			(
+				array('tl_schachturnier_spieler', 'putNummer')
+			),
+			'sql'                     => "varchar(4) NOT NULL default ''"
+		),
+		'dwz' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['dwz'],
+			'exclude'                 => true,
+			'search'                  => true,
+			'flag'                    => 1,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'maxlength'           => 4,
+				'rgxp'                => 'digit',
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "varchar(4) NOT NULL default ''"
+		),
+		'elo' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['elo'],
+			'exclude'                 => true,
+			'search'                  => true,
+			'flag'                    => 1,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'maxlength'           => 4,
+				'rgxp'                => 'digit',
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "varchar(4) NOT NULL default ''"
+		),
+		'titel' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['titel'],
 			'exclude'                 => true,
 			'search'                  => false,
 			'sorting'                 => false,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>10, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(10) NOT NULL default ''"
-		),
-		'alias' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['alias'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'rgxp'                => 'alias', 
-				'unique'              => true, 
-				'maxlength'           => 128, 
-				'tl_class'            => 'w50'
-			),
-			'save_callback' => array
-			(
-				array('tl_schachturnier_spieler', 'generateAlias')
-			),
-			'sql'                     => "varbinary(128) NOT NULL default ''"
-		), 
-		'nationalPlayer' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['nationalPlayer'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'flag'                    => 1,
-			'default'                 => '',
-			'inputType'               => 'checkbox',
-			'eval'                    => array
-			(
-				'doNotCopy'           => false
-			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'birthday' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['birthday'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'mandatory'           => false, 
-				'maxlength'           => 10,
-				'tl_class'            => 'w50',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('tl_schachturnier_spieler', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('tl_schachturnier_spieler', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),  
-		'death' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['death'],
-			'inputType'               => 'checkbox',
-			'filter'                  => true,
-			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'clr'),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'deathday' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['deathday'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'sorting'                 => true,
-			'flag'                    => 11,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'maxlength'           => 10,
-				'tl_class'            => 'w50',
-				'rgxp'                => 'alnum'
-			),
-			'load_callback'           => array
-			(
-				array('tl_schachturnier_spieler', 'getDate')
-			),
-			'save_callback' => array
-			(
-				array('tl_schachturnier_spieler', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
-		),
-		'descendant' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['descendant'],
-			'inputType'               => 'checkbox',
-			'filter'                  => true,
-			'eval'                    => array('submitOnChange'=>true, 'tl_class'=>'clr'),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'descendant_id' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['descendant_id'],
-			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_schachturnier_spieler', 'getPlayer'),
+			'options'                 => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['titel_options'],
 			'eval'                    => array
 			(
-				'mandatory'           => true,
-				'chosen'              => true,
-				'submitOnChange'      => false,
+				'includeBlankOption'  => true,
+				'mandatory'           => false, 
+				'maxlength'           => 3,
 				'tl_class'            => 'w50'
 			),
-			'sql'                     => "int(10) unsigned NOT NULL default '0'"
-		),
+			'sql'                     => "varchar(3) NOT NULL default ''"
+		), 
 		'addImage' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['addImage'],
@@ -292,96 +235,6 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			'eval'                    => array('filesOnly'=>true, 'extensions'=>Config::get('validImageTypes'), 'fieldType'=>'radio', 'mandatory'=>true),
 			'sql'                     => "binary(16) NULL"
 		), 
-		'alt' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['alt'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>255, 'tl_class'=>'long'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'size' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['size'],
-			'exclude'                 => true,
-			'inputType'               => 'imageSize',
-			'options'                 => $GLOBALS['TL_CROP'],
-			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
-			'eval'                    => array('rgxp'=>'digit', 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(64) NOT NULL default ''"
-		),
-		'imagemargin' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['imagemargin'],
-			'exclude'                 => true,
-			'inputType'               => 'trbl',
-			'options'                 => array('px', '%', 'em', 'ex', 'pt', 'pc', 'in', 'cm', 'mm'),
-			'eval'                    => array('includeBlankOption'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(128) NOT NULL default ''"
-		),
-		'imageUrl' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['imageUrl'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'tl_class'=>'w50 wizard'),
-			'wizard' => array
-			(
-				array('tl_schachturnier_spieler', 'pagePicker')
-			),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'fullsize' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['fullsize'],
-			'exclude'                 => true,
-			'inputType'               => 'checkbox',
-			'eval'                    => array('tl_class'=>'w50 m12'),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
-		'caption' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['caption'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>255, 'allowHtml'=>true, 'tl_class'=>'w50'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'floating' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['floating'],
-			'exclude'                 => true,
-			'inputType'               => 'radioTable',
-			'options'                 => array('above', 'left', 'right', 'below'),
-			'eval'                    => array('cols'=>4, 'tl_class'=>'w50'),
-			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
-			'sql'                     => "varchar(12) NOT NULL default ''"
-		), 
-		// Anzahl der Länderkämpfe aus dem externem Import
-		'games_count' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['games_count'],
-			'exclude'                 => true,
-			'search'                  => false,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>4, 'tl_class'=>'w50'),
-			'sql'                     => "int(4) unsigned NOT NULL default '0'"
-		),
-		// Datum der Länderkämpfe aus dem externem Import
-		'games_date' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['games_date'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'sorting'                 => true,
-			'flag'                    => 8,
-			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'date', 'doNotCopy'=>true, 'datepicker'=>true, 'tl_class'=>'w50 wizard'),
-			'sql'                     => "int(10) unsigned NOT NULL default '0'" 
-		),
 		'info' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['info'],
@@ -428,75 +281,58 @@ class tl_schachturnier_spieler extends Backend
 	}
 
 	/**
-	 * Return the link picker wizard
+	 * Listenansicht manipulieren
+	 * @param array
+	 * @param string
 	 * @param \DataContainer
+	 * @param array
 	 * @return string
 	 */
-	public function pagePicker(DataContainer $dc)
+	public function listPlayers($arrRow)
 	{
-		return ' <a href="contao/page.php?do=' . Input::get('do') . '&amp;table=' . $dc->table . '&amp;field=' . $dc->field . '&amp;value=' . str_replace(array('{{link_url::', '}}'), '', $dc->value) . '" title="' . specialchars($GLOBALS['TL_LANG']['MSC']['pagepicker']) . '" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\'' . specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['page'][0])) . '\',\'url\':this.href,\'id\':\'' . $dc->field . '\',\'tag\':\'ctrl_'. $dc->field . ((Input::get('act') == 'editAll') ? '_' . $dc->id : '') . '\',\'self\':this});return false">' . Image::getHtml('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top;cursor:pointer"') . '</a>';
+		$temp = '<div class="tl_content_left">';
+		$temp .= '['.$arrRow['nummer'].'] ';
+		$temp .= $arrRow['lastname'].', ';
+		$temp .= $arrRow['firstname'];
+		return $temp.'</div>';
 	}
-
-	/**
-	 * Generiert automatisch ein Alias aus Nachname und Vorname
-	 * @param mixed
-	 * @param \DataContainer
-	 * @return string
-	 * @throws \Exception
-	 */
-	public function generateAlias($varValue, DataContainer $dc)
-	{
-		$autoAlias = false;
-
-		// Generate alias if there is none
-		if ($varValue == '')
-		{
-			$autoAlias = true;
-			$varValue = standardize(String::restoreBasicEntities($dc->activeRecord->lastname.'-'.$dc->activeRecord->firstname));
-		}
-
-		$objAlias = $this->Database->prepare("SELECT id FROM tl_chesscompetition WHERE alias=?")
-								   ->execute($varValue);
-
-		// Check whether the news alias exists
-		if ($objAlias->numRows > 1 && !$autoAlias)
-		{
-			throw new Exception(sprintf($GLOBALS['TL_LANG']['ERR']['aliasExists'], $varValue));
-		}
-
-		// Add ID to alias
-		if ($objAlias->numRows && $autoAlias)
-		{
-			$varValue .= '-' . $dc->id;
-		}
-
-		return $varValue;
-	} 
 
 	/**
 	 * Datumswert aus Datenbank umwandeln
 	 * @param mixed
 	 * @return mixed
 	 */
-	public function getDate($varValue)
+	public function getNummer($varValue, DataContainer $dc)
 	{
-		$laenge = strlen($varValue);
-		$temp = '';
-		switch($laenge)
+		if($varValue)
 		{
-			case 8: // JJJJMMTT
-				$temp = substr($varValue,6,2).'.'.substr($varValue,4,2).'.'.substr($varValue,0,4);
-				break;
-			case 6: // JJJJMM
-				$temp = substr($varValue,4,2).'.'.substr($varValue,0,4);
-				break;
-			case 4: // JJJJ
-				$temp = $varValue;
-				break;
-			default: // anderer Wert
-				$temp = '';
+			// Nummer vorhanden
+			$temp = $varValue;
 		}
-
+		else
+		{
+			// Keine Nummer vorhanden, nächste freie Nummer suchen
+			$objNummer = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_spieler WHERE pid=?")
+			                                     ->execute($dc->activeRecord->pid);
+			$nummern = array();
+			while($objNummer->next())
+			{
+				$nummern[] = $objNummer->nummer;
+			}
+			// Erste frei Nummer suchen
+			$found = false;
+			for($x = 1; $x < 1000; $x++)
+			{
+				if(!in_array($x, $nummern))
+				{
+					$found = $x;
+					break;
+				}
+			}
+			// Nichts gefunden?
+			if(!$found) $found = count($nummern) + 1;
+			$temp = $found;
+		}
 		return $temp;
 	}
 
@@ -505,56 +341,9 @@ class tl_schachturnier_spieler extends Backend
 	 * @param mixed
 	 * @return mixed
 	 */
-	public function putDate($varValue)
+	public function putNummer($varValue)
 	{
-		$laenge = strlen(trim($varValue));
-		$temp = '';
-		switch($laenge)
-		{
-			case 10: // TT.MM.JJJJ
-				$temp = substr($varValue,6,4).substr($varValue,3,2).substr($varValue,0,2);
-				break;
-			case 7: // MM.JJJJ
-				$temp = substr($varValue,3,4).substr($varValue,0,2);
-				break;
-			case 4: // JJJJ
-				$temp = $varValue;
-				break;
-			default: // anderer Wert
-				$temp = 0;
-		}
-
-		return $temp;
+		return $varValue;
 	} 
-
-	/**
-	 * Listenansicht manipulieren
-	 * @param array
-	 * @param string
-	 * @param \DataContainer
-	 * @param array
-	 * @return string
-	 */
-	public function listPlayers($row, $label, DataContainer $dc, $args)
-	{
-		$args[0] = '<b>'.$args[0].'</b>';
-		$args[1] = '<b>'.$args[1].'</b>';
-		$args[2] = $row['nationalPlayer'] ? $this->generateImage('ok.gif', 'Nationalspieler') : $this->generateImage('delete.gif', 'Kein Nationalspieler');
-		return $args;
-	}
-
-	public function getPlayer(DataContainer $dc)
-	{
-
-		$arrForms = array();
-		$objForms = $this->Database->prepare("SELECT id, firstname, lastname FROM tl_schachturnier_spieler ORDER BY alias")->execute();
-
-		while ($objForms->next())
-		{
-			$arrForms[$objForms->id] = $objForms->lastname .', '.$objForms->firstname. ' (ID ' . $objForms->id . ')';
-		}
-
-		return $arrForms;
-	}
 
 }

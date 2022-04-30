@@ -27,7 +27,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		(
 			'keys' => array
 			(
-				'id' => 'primary',
+				'id'  => 'primary',
 				'pid' => 'index',
 			)
 		)
@@ -40,12 +40,20 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		(
 			'mode'                    => 4,
 			'disableGrouping'         => true,
-			'headerFields'            => array('germanTeam', 'opponentTeam', 'round'),
+			'headerFields'            => array('title'),
+			'fields'                  => array('round ASC', 'board ASC'),
 			'panelLayout'             => 'filter;sort,search,limit',
 			'child_record_callback'   => array('tl_schachturnier_partien', 'listGames'),  
 		),
 		'global_operations' => array
 		(
+			'pairs_generate' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['pairs_generate'],
+				'href'                => 'key=pairs_generate',
+				'icon'                => 'bundles/contaoschachturnier/images/pairs.png',
+				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['tl_schachturnier_partien']['pairs_generate_confirm'] . '\'))return false"',
+			),
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -100,7 +108,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{player_legend},germanPlayer,opponentPlayer,germanRating,opponentRating,germanTitle,opponentTitle,germanColor;{results_legend:hide},result,board,info,source;{pgn_legend},pgn;{publish_legend},complete,published'
+		'default'                     => '{player_legend},whiteName,blackName,round,board,datum;{results_legend:hide},result,info;{pgn_legend},pgn;{publish_legend},published'
 	),
 
 	// Fields
@@ -112,7 +120,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		),
 		'pid' => array
 		(
-			'foreignKey'              => 'tl_chesscompetition_matches.pid',
+			'foreignKey'              => 'tl_schachspieler.id',
 			'sql'                     => "int(10) unsigned NOT NULL default '0'",
 			'relation'                => array('type'=>'belongsTo', 'load'=>'eager')
 		),
@@ -120,12 +128,12 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		(
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'germanPlayer' => array
+		'whiteName' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['germanPlayer'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['whiteName'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_schachturnier_partien', 'getGermanPlayer'),
+			'options_callback'        => array('tl_schachturnier_partien', 'getPlayers'),
 			'eval'                    => array
 			(
 				'mandatory'           => false,
@@ -136,12 +144,12 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'opponentPlayer' => array
+		'blackName' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['opponentPlayer'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['blackName'],
 			'exclude'                 => true,
 			'inputType'               => 'select',
-			'options_callback'        => array('tl_schachturnier_partien', 'getOpponentPlayer'),
+			'options_callback'        => array('tl_schachturnier_partien', 'getPlayers'),
 			'eval'                    => array
 			(
 				'mandatory'           => false,
@@ -152,77 +160,60 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),
-		'germanRating' => array
+		'round' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['germanRating'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['round'],
 			'exclude'                 => true,
+			'search'                  => false,
+			'sorting'                 => false,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'rgxp'                => 'digit', 
-				'maxlength'           => 4,
+				'mandatory'           => false, 
+				'maxlength'           => 3,
 				'tl_class'            => 'w50'
 			),
-			'sql'                     => "int(4) unsigned NOT NULL default '0'"
-		),
-		'opponentRating' => array
+			'sql'                     => "varchar(3) NOT NULL default ''"
+		), 
+		'board' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['opponentRating'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['board'],
 			'exclude'                 => true,
+			'search'                  => false,
+			'sorting'                 => false,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'rgxp'                => 'digit', 
-				'maxlength'           => 4,
+				'mandatory'           => false, 
+				'maxlength'           => 3,
 				'tl_class'            => 'w50'
 			),
-			'sql'                     => "int(4) unsigned NOT NULL default '0'"
-		),
-		'germanTitle' => array
+			'sql'                     => "varchar(3) NOT NULL default ''"
+		), 
+		'datum' => array
 		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['germanTitle'],
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['datum'],
+			'default'                 => date('Ymd'),
 			'exclude'                 => true,
-			'inputType'               => 'select',
-			'options_callback'        => array('tl_schachturnier_partien', 'getTitles'),
+			'search'                  => true,
+			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'chosen'              => true,
-				'submitOnChange'      => false,
-				'includeBlankOption'  => true,
-				'tl_class'            => 'w50'
+				'mandatory'           => false, 
+				'maxlength'           => 10,
+				'tl_class'            => 'w50',
+				'rgxp'                => 'alnum'
 			),
-			'sql'                     => "char(3) NOT NULL default ''"
-		),
-		'opponentTitle' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['opponentTitle'],
-			'exclude'                 => true,
-			'inputType'               => 'select',
-			'options_callback'        => array('tl_schachturnier_partien', 'getTitles'),
-			'eval'                    => array
+			'load_callback'           => array
 			(
-				'chosen'              => true,
-				'submitOnChange'      => false,
-				'includeBlankOption'  => true,
-				'tl_class'            => 'w50'
+				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
 			),
-			'sql'                     => "char(3) NOT NULL default ''"
-		),
-		'germanColor' => array
-		(
-			'label'                 => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['germanColor'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'flag'                    => 1,
-			'default'                 => '',
-			'inputType'               => 'select',
-			'options_callback'        => array('tl_schachturnier_partien', 'getColours'),
-			'eval'                    => array
+			'save_callback' => array
 			(
-				'includeBlankOption'  => true
+				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
 			),
-			'sql'                     => "char(1) NOT NULL default ''"
-		),
+			'sql'                     => "int(8) unsigned NOT NULL default '0'"
+		), 
 		'result' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['result'],
@@ -240,20 +231,6 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			),
 			'sql'                     => "varchar(3) NOT NULL default ''"
 		), 
-		'board' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['board'],
-			'exclude'                 => true,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'rgxp'                => 'digit', 
-				'tl_class'            => 'w50', 
-				'mandatory'           => true, 
-				'maxlength'           => 2
-			),
-			'sql'                     => "smallint(2) unsigned NOT NULL default '0'"
-		), 
 		'info' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['info'],
@@ -262,21 +239,11 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'inputType'               => 'textarea',
 			'eval'                    => array
 			(
-				'rte'                 => 'tinyMCE', 
-				'tl_class'            => 'long', 
+				'tl_class'            => 'w50', 
 				'helpwizard'          => true
 			),
 			'explanation'             => 'insertTags',
 			'sql'                     => "mediumtext NULL"
-		), 
-		'source' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['source'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>255, 'tl_class'=>'long'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
 		), 
 		'pgn' => array
 		(
@@ -287,16 +254,6 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'eval'                    => array('tl_class'=>'clr'),
 			'explanation'             => 'insertTags',
 			'sql'                     => 'text NULL'
-		),
-		'complete' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['complete'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'flag'                    => 1,
-			'default'                 => false,
-			'inputType'               => 'checkbox',
-			'sql'                     => "char(1) NOT NULL default ''"
 		),
 		'published' => array
 		(
@@ -328,6 +285,7 @@ class tl_schachturnier_partien extends Backend
 {
 
 	var $nummer = 0;
+	var $player = array();
 	
 	/**
 	 * Import the back end user object
@@ -338,150 +296,38 @@ class tl_schachturnier_partien extends Backend
 		$this->import('BackendUser', 'User');
 	}
 
-	/**
-	 * Return the edit header button
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @return string
-	 */
-	public function editHeader($row, $href, $label, $title, $icon, $attributes)
-	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_schachturnier_partien::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
-	}
-
-
-	/**
-	 * Return the link picker wizard
-	 * @param \DataContainer
-	 * @return string
-	 */
-	public function pagePicker(DataContainer $dc)
-	{
-		return ' <a href="contao/page.php?do=' . Input::get('do') . '&amp;table=' . $dc->table . '&amp;field=' . $dc->field . '&amp;value=' . str_replace(array('{{link_url::', '}}'), '', $dc->value) . '" title="' . specialchars($GLOBALS['TL_LANG']['MSC']['pagepicker']) . '" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\'' . specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['page'][0])) . '\',\'url\':this.href,\'id\':\'' . $dc->field . '\',\'tag\':\'ctrl_'. $dc->field . ((Input::get('act') == 'editAll') ? '_' . $dc->id : '') . '\',\'self\':this});return false">' . Image::getHtml('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top;cursor:pointer"') . '</a>';
-	}
-
 	public function listGames($arrRow)
 	{
 		$temp = '<div class="tl_content_left">';
-		$temp .= $arrRow['complete'] ? $this->generateImage('ok.gif', 'Partiedaten komplett') : $this->generateImage('delete.gif', 'Partiedaten nicht komplett');
-		$temp .= '<b>['.$arrRow['board'].']</b>';
-		// Mannschaftsnamen bauen
-		$temp .= $arrRow['home'] ?  ' ' . $this->getPlayer($arrRow['germanPlayer']) : ' ' . $this->getPlayer($arrRow['opponentPlayer']); 
-		$temp .= $arrRow['home'] ? ' - ' . $this->getPlayer($arrRow['opponentPlayer']) : ' - ' . $this->getPlayer($arrRow['germanPlayer']); 
+		$temp .= '<span style="display:inline-block; width:100px;">'.$arrRow['round'].'.'.$arrRow['board'].'</span>';
+		$temp .= self::getPlayer($arrRow['whiteName']).' - '.self::getPlayer($arrRow['blackName']);
 		return $temp.'</div>';
 	}
 
-	/**
-	 * Datumswert aus Datenbank umwandeln
-	 * @param mixed
-	 * @return mixed
-	 */
-	public function getDate($varValue)
+	public function getPlayers(DataContainer $dc)
 	{
-		$laenge = strlen($varValue);
-		$temp = '';
-		switch($laenge)
+
+		$arrForms = array();
+		$objForms = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_spieler WHERE pid=? ORDER BY nummer ASC")
+		                                    ->execute($dc->activeRecord->pid);
+
+		while($objForms->next())
 		{
-			case 8: // JJJJMMTT
-				$temp = substr($varValue,6,2).'.'.substr($varValue,4,2).'.'.substr($varValue,0,4);
-				break;
-			case 6: // JJJJMM
-				$temp = substr($varValue,4,2).'.'.substr($varValue,0,4);
-				break;
-			case 4: // JJJJ
-				$temp = $varValue;
-				break;
-			default: // anderer Wert
-				$temp = '';
+			$arrForms[$objForms->id] = '('.$objForms->nummer.') '.$objForms->firstname .' '.$objForms->lastname;
 		}
 
-		return $temp;
-	}
-
-	/**
-	 * Datumswert für Datenbank umwandeln
-	 * @param mixed
-	 * @return mixed
-	 */
-	public function putDate($varValue)
-	{
-		$laenge = strlen(trim($varValue));
-		$temp = '';
-		switch($laenge)
-		{
-			case 10: // TT.MM.JJJJ
-				$temp = substr($varValue,6,4).substr($varValue,3,2).substr($varValue,0,2);
-				break;
-			case 7: // MM.JJJJ
-				$temp = substr($varValue,3,4).substr($varValue,0,2);
-				break;
-			case 4: // JJJJ
-				$temp = $varValue;
-				break;
-			default: // anderer Wert
-				$temp = 0;
-		}
-
-		return $temp;
+		return $arrForms;
 	}
 
 	public function getPlayer($id)
 	{
 
-		$objPlayer = $this->Database->prepare("SELECT id, firstname, lastname FROM tl_chesscompetition_players WHERE id = ?")->execute($id);
+		$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_spieler WHERE id = ?")
+		                                     ->execute($id);
 
-		if($objPlayer->numRows == 1) return $objPlayer->firstname.' '.$objPlayer->lastname;
+		if($objPlayer->numRows == 1) return '('.$objPlayer->nummer.') '.$objPlayer->firstname.' '.$objPlayer->lastname;
 		else return $id;
 
-	}
-
-	public function getGermanPlayer(DataContainer $dc)
-	{
-
-		$arrForms = array();
-		$objForms = $this->Database->prepare("SELECT id, firstname, lastname FROM tl_chesscompetition_players WHERE nationalPlayer = ? ORDER BY alias")->execute(1);
-
-		while ($objForms->next())
-		{
-			$arrForms[$objForms->id] = $objForms->lastname .', '.$objForms->firstname. ' (ID ' . $objForms->id . ')';
-		}
-
-		return $arrForms;
-	}
-
-	public function getOpponentPlayer(DataContainer $dc)
-	{
-
-		$arrForms = array();
-		$objForms = $this->Database->prepare("SELECT id, firstname, lastname FROM tl_chesscompetition_players ORDER BY alias")->execute();
-
-		while ($objForms->next())
-		{
-			$arrForms[$objForms->id] = $objForms->lastname .', '.$objForms->firstname. ' (ID ' . $objForms->id . ')';
-		}
-
-		return $arrForms;
-	}
-
-	public function getTitles(DataContainer $dc)
-	{
-		$arrForms = array
-		(
-			'GM'   => 'Großmeister',
-			'HM'   => 'Ehrengroßmeister',
-			'IM'   => 'Internationaler Meister',
-			'FM'   => 'FIDE-Meister',
-			'CM'   => 'Kandidaten-Meister',
-			'WGM'  => 'Frauen: Großmeisterin',
-			'WIM'  => 'Frauen: Internationale Meisterin',
-			'WFM'  => 'Frauen: FIDE-Meisterin',
-			'WCM'  => 'Frauen: Kandidaten-Meisterin'
-		);
-		return $arrForms;
 	}
 
 	public function getResults(DataContainer $dc)
@@ -494,16 +340,6 @@ class tl_schachturnier_partien extends Backend
 			'+:-'  => '+:-',
 			'-:+'  => '-:+',
 			'-:-'  => '-:-'
-		);
-		return $arrForms;
-	}
-
-	public function getColours(DataContainer $dc)
-	{
-		$arrForms = array
-		(
-			'w'   => 'Weiß',
-			's'   => 'Schwarz'
 		);
 		return $arrForms;
 	}

@@ -13,6 +13,15 @@
 
 $GLOBALS['BE_MOD']['content']['schachturnier'] = array
 (
-	'tables'         => array('tl_schachturnier', 'tl_schachturnier_spieler', 'tl_schachturnier_partien'),
+	'tables'         => array('tl_schachturnier', 'tl_schachturnier_spieler', 'tl_schachturnier_partien', 'tl_schachturnier_termine'),
+	'pairs_generate' => array('Schachbulle\ContaoSchachturnierBundle\Classes\Paarungsgenerator', 'generatePairs'),
 	'icon'           => 'bundles/contaoschachturnier/images/icon.png',
 );
+
+/**
+ * -------------------------------------------------------------------------
+ * CONTENT ELEMENTS
+ * -------------------------------------------------------------------------
+ */
+$GLOBALS['TL_CTE']['schach']['schachturnier'] = 'Schachbulle\ContaoSchachturnierBundle\ContentElements\Schachturnier';
+

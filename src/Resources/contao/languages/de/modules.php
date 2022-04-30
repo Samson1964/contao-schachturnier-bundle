@@ -10,4 +10,4 @@
 /**
  * Back end modules
  */
-$GLOBALS['TL_LANG']['MOD']['chesscompetition'] = array('Länderkämpfe', 'Länderkämpfe der Nationalmannschaften verwalten');
+$GLOBALS['TL_LANG']['MOD']['schachturnier'] = array('Schachturniere', 'Schachturniere verwalten');

@@ -1,0 +1,30 @@
+<?php $this->extend('block_searchable'); ?>
+
+<?php $this->block('content'); ?>
+
+<table>
+<thead>
+	<tr>
+		<th>Nr.</th>
+		<th>Name</th>
+		<?php if($this->view_land): ?><th>Land</th><?php endif; ?>
+		<?php if($this->view_elo): ?><th>Elo</th><?php endif; ?>
+		<?php if($this->view_dwz): ?><th>DWZ</th><?php endif; ?>
+		<?php if($this->view_verein): ?><th>Verein</th><?php endif; ?>
+	</tr>
+</thead>
+<tbody>
+<?php foreach($this->tabelle as $item): ?>
+	<tr>
+		<td><?= $item['nummer'] ?></td>
+		<td><?= $item['name'] ?></td>
+		<?php if($this->view_land): ?><td><?= $item['land'] ?></td><?php endif; ?>
+		<?php if($this->view_elo): ?><td><?= $item['elo'] ?></td><?php endif; ?>
+		<?php if($this->view_dwz): ?><td><?= $item['dwz'] ?></td><?php endif; ?>
+		<?php if($this->view_verein): ?><td><?= $item['verein'] ?></td><?php endif; ?>
+	</tr>
+<?php endforeach; ?>
+</tbody>
+</table>
+
+<?php $this->endblock(); ?>

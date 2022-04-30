@@ -21,7 +21,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 	'config' => array
 	(
 		'dataContainer'               => 'Table',
-		'ctable'                      => array('tl_schachturnier_spieler', 'tl_schachturnier_partien'),
+		'ctable'                      => array('tl_schachturnier_spieler', 'tl_schachturnier_partien', 'tl_schachturnier_termine'),
 		'switchToEdit'                => true,
 		'enableVersioning'            => true,
 		'sql' => array
@@ -45,19 +45,12 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 		),
 		'label' => array
 		(
-			'fields'                  => array('toDate', 'title', 'place', 'country', 'complete'),
+			'fields'                  => array('title', 'fromDate', 'toDate', 'complete'),
 			'showColumns'             => true,
-			'format'                  => '%s %s %s %s %s',
-			'label_callback'          => array('tl_schachturnier', 'listTournaments')
+			'format'                  => '%s %s %s %s',
 		),
 		'global_operations' => array
 		(
-			'players' => array
-			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier']['players'],
-				'href'                => 'table=tl_schachturnier_players',
-				'icon'                => 'system/modules/schachturnier/assets/images/players.png',
-			),  
 			'all' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
@@ -71,22 +64,32 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			'edit' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier']['edit'],
-				'href'                => 'table=tl_schachturnier_matches',
+				'href'                => 'act=edit',
 				'icon'                => 'edit.gif'
 			),
-			'editheader' => array
+			'editTermine' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier']['editheader'],
-				'href'                => 'act=edit',
-				'icon'                => 'header.gif',
-				'button_callback'     => array('tl_schachturnier', 'editHeader')
+				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier']['editTermine'],
+				'href'                => 'table=tl_schachturnier_termine',
+				'icon'                => 'bundles/contaoschachturnier/images/termin.png',
+			),
+			'editSpieler' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier']['editSpieler'],
+				'href'                => 'table=tl_schachturnier_spieler',
+				'icon'                => 'bundles/contaoschachturnier/images/players.png',
+			),
+			'editPartien' => array
+			(
+				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier']['editPartien'],
+				'href'                => 'table=tl_schachturnier_partien',
+				'icon'                => 'bundles/contaoschachturnier/images/games.png',
 			),
 			'copy' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier']['copy'],
 				'href'                => 'act=copy',
 				'icon'                => 'copy.gif',
-				'button_callback'     => array('tl_schachturnier', 'copyArchive')
 			),
 			'delete' => array
 			(
@@ -94,7 +97,6 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'href'                => 'act=delete',
 				'icon'                => 'delete.gif',
 				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
-				'button_callback'     => array('tl_schachturnier', 'deleteArchive')
 			),
 			'toggle' => array
 			(
@@ -115,7 +117,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{title_legend},title,type;{place_legend},place,country;{date_legend},fromDate,toDate;{info_legend:hide},info,source;{options_legend:hide},singleSRC,url;{publish_legend},complete,published'
+		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate;{publish_legend},published,complete'
 	),
 
 	// Fields
@@ -145,40 +147,6 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			),
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'place' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['place'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'filter'                  => true,
-			'sorting'                 => true,
-			'flag'                    => 1,
-			'inputType'               => 'text',
-			'eval'                    => array
-			(
-				'mandatory'           => false, 
-				'maxlength'           => 255,
-				'tl_class'            => 'w50'
-			),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		),
-		'country' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['country'],
-			'exclude'                 => true,
-			'filter'                  => true,
-			'sorting'                 => true,
-			'flag'                    => 1,
-			'inputType'               => 'select',
-			'options'                 => System::getCountries(),
-			'eval'                    => array
-			(
-				'includeBlankOption'  => true, 
-				'chosen'              => true, 
-				'tl_class'            => 'w50'
-			),
-			'sql'                     => "varchar(2) NOT NULL default ''"
-		),  
 		'type' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['type'],
@@ -212,11 +180,11 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			),
 			'load_callback'           => array
 			(
-				array('tl_schachturnier', 'getDate')
+				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
 			),
 			'save_callback' => array
 			(
-				array('tl_schachturnier', 'putDate')
+				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
 			),
 			'sql'                     => "int(8) unsigned NOT NULL default '0'"
 		), 
@@ -237,54 +205,14 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			),
 			'load_callback'           => array
 			(
-				array('tl_schachturnier', 'getDate')
+				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
 			),
 			'save_callback' => array
 			(
-				array('tl_schachturnier', 'putDate')
+				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
 			),
 			'sql'                     => "int(8) unsigned NOT NULL default '0'"
 		),  
-		'info' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['info'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'textarea',
-			'eval'                    => array('rte'=>'tinyMCE', 'helpwizard'=>true, 'tl_class'=>'clr'),
-			'explanation'             => 'insertTags',
-			'sql'                     => "mediumtext NULL"
-		),  
-		'source' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['source'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('maxlength'=>255, 'tl_class'=>'long'),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		), 
-		'singleSRC' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['singleSRC'],
-			'exclude'                 => true,
-			'inputType'               => 'fileTree',
-			'eval'                    => array('filesOnly'=>true, 'fieldType'=>'radio', 'tl_class'=>'clr'),
-			'sql'                     => "binary(16) NULL",
-		),  
-		'url' => array
-		(
-			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['url'],
-			'exclude'                 => true,
-			'search'                  => true,
-			'inputType'               => 'text',
-			'eval'                    => array('rgxp'=>'url', 'decodeEntities'=>true, 'maxlength'=>255, 'fieldType'=>'radio', 'tl_class'=>'clr w50 wizard'),
-			'wizard' => array
-			(
-				array('tl_schachturnier', 'pagePicker')
-			),
-			'sql'                     => "varchar(255) NOT NULL default ''"
-		), 
 		'complete' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['complete'],
@@ -293,6 +221,10 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			'flag'                    => 1,
 			'default'                 => false,
 			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50 m12',
+			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),  
 		'published' => array
@@ -305,7 +237,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			'inputType'               => 'checkbox',
 			'eval'                    => array
 			(
-				'doNotCopy'           => true
+				'tl_class'            => 'w50 m12',
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		),  
@@ -331,133 +263,6 @@ class tl_schachturnier extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
-	}
-
-	/**
-	 * Return the edit header button
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @return string
-	 */
-	public function editHeader($row, $href, $label, $title, $icon, $attributes)
-	{
-		return ($this->User->isAdmin || count(preg_grep('/^tl_schachturnier::/', $this->User->alexf)) > 0) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
-	}
-
-
-	/**
-	 * Return the copy archive button
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @return string
-	 */
-	public function copyArchive($row, $href, $label, $title, $icon, $attributes)
-	{
-		return ($this->User->isAdmin || $this->User->hasAccess('create', 'newp')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
-	}
-
-
-	/**
-	 * Return the delete archive button
-	 * @param array
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @return string
-	 */
-	public function deleteArchive($row, $href, $label, $title, $icon, $attributes)
-	{
-		return ($this->User->isAdmin || $this->User->hasAccess('delete', 'newp')) ? '<a href="'.$this->addToUrl($href.'&amp;id='.$row['id']).'" title="'.specialchars($title).'"'.$attributes.'>'.Image::getHtml($icon, $label).'</a> ' : Image::getHtml(preg_replace('/\.gif$/i', '_.gif', $icon)).' ';
-	}
-
-	/**
-	 * Return the link picker wizard
-	 * @param \DataContainer
-	 * @return string
-	 */
-	public function pagePicker(DataContainer $dc)
-	{
-		return ' <a href="contao/page.php?do=' . Input::get('do') . '&amp;table=' . $dc->table . '&amp;field=' . $dc->field . '&amp;value=' . str_replace(array('{{link_url::', '}}'), '', $dc->value) . '" title="' . specialchars($GLOBALS['TL_LANG']['MSC']['pagepicker']) . '" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\'' . specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['page'][0])) . '\',\'url\':this.href,\'id\':\'' . $dc->field . '\',\'tag\':\'ctrl_'. $dc->field . ((Input::get('act') == 'editAll') ? '_' . $dc->id : '') . '\',\'self\':this});return false">' . Image::getHtml('pickpage.gif', $GLOBALS['TL_LANG']['MSC']['pagepicker'], 'style="vertical-align:top;cursor:pointer"') . '</a>';
-	} 
-
-	/**
-	 * Datumswert aus Datenbank umwandeln
-	 * @param mixed
-	 * @return mixed
-	 */
-	public function getDate($varValue)
-	{
-		$laenge = strlen($varValue);
-		$temp = '';
-		switch($laenge)
-		{
-			case 8: // JJJJMMTT
-				$temp = substr($varValue,6,2).'.'.substr($varValue,4,2).'.'.substr($varValue,0,4);
-				break;
-			case 6: // JJJJMM
-				$temp = substr($varValue,4,2).'.'.substr($varValue,0,4);
-				break;
-			case 4: // JJJJ
-				$temp = $varValue;
-				break;
-			default: // anderer Wert
-				$temp = '';
-		}
-
-		return $temp;
-	}
-
-	/**
-	 * Datumswert für Datenbank umwandeln
-	 * @param mixed
-	 * @return mixed
-	 */
-	public function putDate($varValue)
-	{
-		$laenge = strlen(trim($varValue));
-		$temp = '';
-		switch($laenge)
-		{
-			case 10: // TT.MM.JJJJ
-				$temp = substr($varValue,6,4).substr($varValue,3,2).substr($varValue,0,2);
-				break;
-			case 7: // MM.JJJJ
-				$temp = substr($varValue,3,4).substr($varValue,0,2);
-				break;
-			case 4: // JJJJ
-				$temp = $varValue;
-				break;
-			default: // anderer Wert
-				$temp = 0;
-		}
-
-		return $temp;
-	} 
-
-	/**
-	 * Listenansicht manipulieren
-	 * @param array
-	 * @param string
-	 * @param \DataContainer
-	 * @param array
-	 * @return string
-	 */
-	public function listTournaments($row, $label, DataContainer $dc, $args)
-	{
-		$args[0] = $this->getDate($args[0]);
-		$args[1] = '<b>'.$args[1].'</b>';
-		$args[4] = $row['complete'] ? $this->generateImage('ok.gif', 'Wettbewerb komplett') : $this->generateImage('delete.gif', 'Wettbewerb nicht komplett');
-		return $args;
 	}
 
 	/**

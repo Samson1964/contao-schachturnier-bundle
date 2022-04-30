@@ -1,0 +1,30 @@
+<?php $this->extend('block_searchable'); ?>
+
+<?php $this->block('content'); ?>
+
+<table>
+<thead>
+<?php foreach($this->tabelle as $runde => $arrRunde): ?>
+	<tr>
+		<th colspan="6"><?= $runde ?>. Runde <?php if($this->termine[$runde]) echo 'am '.$this->termine[$runde]['datum']; ?></th>
+	</tr>
+	<?php foreach($arrRunde as $brett => $arrBrett): ?>
+		<tr>
+			<td><?= $brett ?></td>
+			<td><?php if($arrBrett['weiss_name']) echo $arrBrett['weiss_name']; else echo $arrBrett['weiss_nr']; ?><?php if($arrBrett['weiss_dwz']) echo ' ('.$arrBrett['weiss_dwz'].')'; ?></td>
+			<td><?= $arrBrett['ergebnis'] ?></td>
+			<td><?php if($arrBrett['schwarz_name']) echo $arrBrett['schwarz_name']; else echo $arrBrett['schwarz_nr']; ?><?php if($arrBrett['schwarz_dwz']) echo ' ('.$arrBrett['schwarz_dwz'].')'; ?></td>
+			<td><?= $arrBrett['datum'] ?></td>
+			<td><?= $arrBrett['info'] ?></td>
+		</tr>
+	<?php endforeach; ?>
+<?php endforeach; ?>
+</thead>
+</table>
+
+<pre>
+<?= print_r($this->termine) ?>
+<?= print_r($this->tabelle) ?>
+</pre>
+
+<?php $this->endblock(); ?>
