@@ -101,7 +101,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('addImage'),
-		'default'                     => '{name_legend},firstname,lastname,nummer;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},ausgeschieden;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Unterpaletten
@@ -219,6 +219,20 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			),
 			'sql'                     => "varchar(3) NOT NULL default ''"
 		), 
+		'ausgeschieden' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['ausgeschieden'],
+			'default'                 => '',
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'doNotCopy'           => false,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50 m12'
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		), 
 		'addImage' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['addImage'],
@@ -292,8 +306,9 @@ class tl_schachturnier_spieler extends Backend
 	{
 		$temp = '<div class="tl_content_left">';
 		$temp .= '['.$arrRow['nummer'].'] ';
-		$temp .= $arrRow['lastname'].', ';
-		$temp .= $arrRow['firstname'];
+		if($arrRow['ausgeschieden']) $temp .= '<s>';
+		$temp .= $arrRow['lastname'].', '.$arrRow['firstname'];
+		if($arrRow['ausgeschieden']) $temp .= '</s>';
 		return $temp.'</div>';
 	}
 

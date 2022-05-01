@@ -193,26 +193,23 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		'datum' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['datum'],
-			'default'                 => date('Ymd'),
 			'exclude'                 => true,
 			'search'                  => true,
+			'flag'                    => 5,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
 				'mandatory'           => false, 
 				'maxlength'           => 10,
-				'tl_class'            => 'w50',
-				'rgxp'                => 'alnum'
+				'datepicker'          => true,
+				'tl_class'            => 'w50 wizard',
+				'rgxp'                => 'date'
 			),
 			'load_callback'           => array
 			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
+				array('tl_schachturnier_partien', 'loadDate')
 			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		), 
 		'result' => array
 		(
@@ -294,6 +291,18 @@ class tl_schachturnier_partien extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+	}
+
+	/**
+	 * Set the timestamp to 00:00:00 (see #26)
+	 *
+	 * @param integer $value
+	 *
+	 * @return integer
+	 */
+	public function loadDate($value)
+	{
+		return strtotime(date('Y-m-d', $value) . ' 00:00:00');
 	}
 
 	public function listGames($arrRow)

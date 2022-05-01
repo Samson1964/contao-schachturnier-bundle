@@ -1,0 +1,25 @@
+.ce_schachturnier {
+	margin-bottom: 10px;
+}
+
+.ce_schachturnier td.board {
+	width: 4%;
+}
+
+.ce_schachturnier td.result {
+	width: 8%;
+	text-align: center;
+}
+
+.ce_schachturnier td.name {
+	width: 36%;
+}
+
+.ce_schachturnier td.rating {
+	width: 8%;
+}
+
+.ce_schachturnier td.info {
+	font-size: 12px;
+}
+

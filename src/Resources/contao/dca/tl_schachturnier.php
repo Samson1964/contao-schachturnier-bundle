@@ -167,51 +167,48 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 		'fromDate' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['fromDate'],
-			'default'                 => date('Ymd'),
+			'default'                 => date('d.m.Y'),
 			'exclude'                 => true,
 			'search'                  => true,
+			'flag'                    => 6,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'mandatory'           => true, 
+				'rgxp'                => 'date',
+				'mandatory'           => false,
+				'doNotCopy'           => false,
+				'datepicker'          => true,
 				'maxlength'           => 10,
-				'tl_class'            => 'w50',
-				'rgxp'                => 'alnum'
+				'tl_class'            => 'w50 wizard'
 			),
 			'load_callback'           => array
 			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
+				array('tl_schachturnier', 'loadDate')
 			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		), 
 		'toDate' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['toDate'],
-			'default'                 => date('Ymd'),
 			'exclude'                 => true,
 			'search'                  => true,
 			'sorting'                 => true,
-			'flag'                    => 2,
+			'flag'                    => 6,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
+				'rgxp'                => 'date',
+				'mandatory'           => false,
+				'doNotCopy'           => false,
+				'datepicker'          => true,
 				'maxlength'           => 10,
-				'tl_class'            => 'w50',
-				'rgxp'                => 'alnum'
+				'tl_class'            => 'w50 wizard'
 			),
 			'load_callback'           => array
 			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'getDate')
+				array('tl_schachturnier', 'loadDate')
 			),
-			'save_callback' => array
-			(
-				array('\Schachbulle\ContaoHelperBundle\Classes\Helper', 'putDate')
-			),
-			'sql'                     => "int(8) unsigned NOT NULL default '0'"
+			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		),  
 		'complete' => array
 		(
@@ -263,6 +260,18 @@ class tl_schachturnier extends Backend
 	{
 		parent::__construct();
 		$this->import('BackendUser', 'User');
+	}
+
+	/**
+	 * Set the timestamp to 00:00:00 (see #26)
+	 *
+	 * @param integer $value
+	 *
+	 * @return integer
+	 */
+	public function loadDate($value)
+	{
+		return strtotime(date('Y-m-d', $value) . ' 00:00:00');
 	}
 
 	/**

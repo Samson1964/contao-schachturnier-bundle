@@ -2,6 +2,10 @@
 
 <?php $this->block('content'); ?>
 
+<?php
+	$GLOBALS['TL_CSS'][] = 'bundles/contaoschachturnier/css/default.css';
+?>
+
 <table>
 <thead>
 	<tr>

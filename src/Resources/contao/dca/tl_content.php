@@ -29,7 +29,7 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['schachturnier'] = array
 	'eval'                             => array
 	(
 		'tl_class'                     => 'long', 
-		'submitOnChange'               => true, 
+		'submitOnChange'               => false, 
 		'chosen'                       => true
 	),
 	'sql'                              => "int(10) unsigned NOT NULL default '0'"

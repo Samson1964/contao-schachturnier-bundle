@@ -9,7 +9,7 @@
 // Eingabemaske
 $GLOBALS['TL_LANG']['tl_schachturnier_termine']['runde_legend'] = 'Termin';
 $GLOBALS['TL_LANG']['tl_schachturnier_termine']['runde'] = array('Runde', 'Nummer der Runde');
-$GLOBALS['TL_LANG']['tl_schachturnier_termine']['datum'] = array('Datum', 'Spieldatum der Runde');
+$GLOBALS['TL_LANG']['tl_schachturnier_termine']['datum'] = array('Datum', 'Spieldatum der Runde im Format TT.MM.JJJJ');
 
 $GLOBALS['TL_LANG']['tl_schachturnier_termine']['publish_legend'] = 'Veröffentlichung';
 $GLOBALS['TL_LANG']['tl_schachturnier_termine']['published'] = array('Veröffentlicht', 'Termin veröffentlicht');

@@ -72,45 +72,8 @@ class Schachturnier extends \ContentElement
 				$this->strTemplate = 'ce_schachturnier_paarungen';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
 
-				// Spieler laden
-				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? AND published = ?')
-				                                     ->execute($this->schachturnier, 1);
-				
-				$spieler = array();
-				if($objResult->numRows)
-				{
-					// Datensätze verarbeiten
-					while($objResult->next())
-					{
-						$spieler[$objResult->id] = array
-						(
-							'name'   => $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname,
-							'titel'  => $objResult->titel,
-							'land'   => $objResult->land,
-							'verein' => $objResult->verein,
-							'dwz'    => $objResult->dwz,
-							'elo'    => $objResult->elo,
-							'bild'   => $objResult->singleSRC
-						);
-					}
-				}
-
-				// Termine laden
-				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_termine WHERE pid = ? AND published = ?')
-				                                     ->execute($this->schachturnier, 1);
-				
-				$termin = array();
-				if($objResult->numRows)
-				{
-					// Datensätze verarbeiten
-					while($objResult->next())
-					{
-						$termin[$objResult->runde] = array
-						(
-							'datum'      => \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($objResult->datum),
-						);
-					}
-				}
+				$spieler = self::getSpieler();
+				$termin = self::getTermine();
 
 				// Paarungen laden
 				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ?')
@@ -124,12 +87,12 @@ class Schachturnier extends \ContentElement
 						$paarung[$objResult->round][$objResult->board] = array
 						(
 							'weiss_nr'     => $objResult->whiteName,
-							'weiss_name'   => $spieler[$objResult->whiteName]['name'],
+							'weiss_name'   => $spieler[$objResult->whiteName]['ausgeschieden'] ? '<s>'.$spieler[$objResult->whiteName]['name'].'</s>' : $spieler[$objResult->whiteName]['name'],
 							'weiss_dwz'    => $spieler[$objResult->whiteName]['dwz'],
 							'schwarz_nr'   => $objResult->blackName,
-							'schwarz_name' => $spieler[$objResult->blackName]['name'],
+							'schwarz_name' => $spieler[$objResult->blackName]['ausgeschieden'] ? '<s>'.$spieler[$objResult->blackName]['name'].'</s>' : $spieler[$objResult->blackName]['name'],
 							'schwarz_dwz'  => $spieler[$objResult->blackName]['dwz'],
-							'datum'        => $objResult->datum && $objResult->datum != $termin[$objResult->round] ? \Schachbulle\ContaoHelperBundle\Classes\Helper::getDate($objResult->datum) : '',
+							'datum'        => $objResult->datum ? date('d.m.Y', $objResult->datum) : '',
 							'ergebnis'     => $objResult->result ? $objResult->result : '-',
 							'info'         => $objResult->info,
 						);
@@ -156,4 +119,52 @@ class Schachturnier extends \ContentElement
 
 	}
 
+	function getSpieler()
+	{
+		// Spieler laden
+		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? AND published = ?')
+		                                     ->execute($this->schachturnier, 1);
+		
+		$spieler = array();
+		if($objResult->numRows)
+		{
+			// Datensätze verarbeiten
+			while($objResult->next())
+			{
+				$spieler[$objResult->id] = array
+				(
+					'name'          => $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname,
+					'titel'         => $objResult->titel,
+					'land'          => $objResult->land,
+					'verein'        => $objResult->verein,
+					'ausgeschieden' => $objResult->ausgeschieden,
+					'dwz'           => $objResult->dwz,
+					'elo'           => $objResult->elo,
+					'bild'          => $objResult->singleSRC
+				);
+			}
+		}
+		return $spieler;
+	}
+
+	function getTermine()
+	{
+		// Termine laden
+		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_termine WHERE pid = ? AND published = ?')
+		                                     ->execute($this->schachturnier, 1);
+		
+		$termin = array();
+		if($objResult->numRows)
+		{
+			// Datensätze verarbeiten
+			while($objResult->next())
+			{
+				$termin[$objResult->runde] = array
+				(
+					'datum'      => date('d.m.Y', $objResult->datum),
+				);
+			}
+		}
+		return $termin;
+	}
 }
