@@ -14,6 +14,13 @@ $GLOBALS['TL_LANG']['tl_schachturnier_partien']['round'] = array('Runde', 'Numme
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['board'] = array('Brett', 'Nummer des Brettes');
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['datum'] = array('Alternatives Datum', 'Alternatives Spieldatum der Partie');
 
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_legend'] = 'Absagen';
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen'] = array('Absagen', 'Erfassen Sie hier alle Absagen bzw. Verschiebungen der Partie. Im Frontend wird eine Absage nur markiert, wenn sie aktiv und nach Datum der aktuellste Eintrag ist.');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_datum'] = array('Datum', 'Datum der Absage');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_wer'] = array('Wer', 'Wer hat die Absage gemacht?');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_bemerkung'] = array('Bemerkung', 'Interne Bemerkung. Wird nicht im Frontend angezeigt.');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_aktiv'] = array('Aktiv', 'Absage aktivieren/deaktivieren');
+
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['results_legend'] = 'Ergebnis';
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['result'] = array('Ergebnis', 'Ergebnis aus Sicht des Weiß-Spielers');
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['info'] = array('Information', 'Information zur Paarung. Wird neben der Paarung in einer Paarungsliste ausgegeben.');

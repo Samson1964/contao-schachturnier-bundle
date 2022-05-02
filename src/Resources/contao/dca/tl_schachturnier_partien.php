@@ -108,7 +108,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{player_legend},whiteName,blackName,round,board,datum;{results_legend:hide},result,info;{pgn_legend},pgn;{publish_legend},published'
+		'default'                     => '{player_legend},whiteName,blackName,round,board,datum;{absagen_legend:hide},absagen;{results_legend:hide},result,info;{pgn_legend},pgn;{publish_legend},published'
 	),
 
 	// Fields
@@ -211,6 +211,69 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
 		), 
+		'absagen' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen'],
+			'exclude'                 => true,
+			'inputType'               => 'multiColumnWizard',
+			'eval'                    => array
+			(
+				'tl_class'            => 'clr',
+				'buttonPos'           => 'top',
+				'columnFields'        => array
+				(
+					'datum' => array
+					(
+						'label'                 => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_datum'],
+						'exclude'               => true,
+						'inputType'             => 'text',
+						'eval'                  => array
+						(
+							'maxlength'         => 10,
+							'style'             => 'width: 100px',
+							'valign'            => 'middle',
+							'rgxp'              => 'date',
+							'datepicker'        => true
+
+						)
+					),
+					'wer' => array
+					(
+						'label'                 => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_wer'],
+						'exclude'               => true,
+						'inputType'             => 'select',
+						'options'               => array('white' => 'Weiß-Spieler', 'black' => 'Schwarz-Spieler'),
+						'eval'                  => array
+						(
+							'style'             => 'width: 200px',
+						),
+					),
+					'bemerkung' => array
+					(
+						'label'                 => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_bemerkung'],
+						'exclude'               => true,
+						'inputType'             => 'text',
+						'eval'                  => array
+						(
+							'style'             => 'width: 400px',
+						)
+					),
+					'aktiv' => array
+					(
+						'label'                 => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen_aktiv'],
+						'exclude'               => true,
+						'inputType'             => 'checkbox',
+						'eval'                  => array
+						(
+							'boolean'           => true,
+							'style'             => 'width: 20px',
+							'valign'            => 'middle'
+						)
+					),
+				)
+			),
+			'sql'                   => "blob NULL"
+		),
 		'result' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['result'],
@@ -262,7 +325,8 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'inputType'               => 'checkbox',
 			'eval'                    => array
 			(
-				'doNotCopy'           => true
+				'doNotCopy'           => true,
+				'boolean'             => true,
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		), 

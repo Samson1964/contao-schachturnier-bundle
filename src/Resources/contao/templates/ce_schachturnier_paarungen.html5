@@ -15,10 +15,10 @@
 	<?php foreach($arrRunde as $brett => $arrBrett): ?>
 		<tr>
 			<td class="board"><?= $brett ?></td>
-			<td class="name"><?php if($arrBrett['weiss_name']) echo $arrBrett['weiss_name']; else echo $arrBrett['weiss_nr']; ?></td>
+			<td class="name"><?php if($arrBrett['weiss_name']) echo $arrBrett['weiss_name']; else echo $arrBrett['weiss_nummer']; ?></td>
 			<td class="rating"><?= $arrBrett['weiss_dwz'] ?></td>
 			<td class="result"><?= $arrBrett['ergebnis'] ?></td>
-			<td class="name"><?php if($arrBrett['schwarz_name']) echo $arrBrett['schwarz_name']; else echo $arrBrett['schwarz_nr']; ?></td>
+			<td class="name"><?php if($arrBrett['schwarz_name']) echo $arrBrett['schwarz_name']; else echo $arrBrett['schwarz_nummer']; ?></td>
 			<td class="rating"><?= $arrBrett['schwarz_dwz'] ?></td>
 		</tr>
 		<?php if($arrBrett['datum'] || $arrBrett['info']): ?>

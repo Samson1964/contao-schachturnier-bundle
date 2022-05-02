@@ -1,5 +1,11 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.0.4 (2022-05-02)
+
+* Add: Absagen als MCW in Paarungen eingebaut
+* Add: Frontendausgabe der abgesagten Partien in Paarungslisten
+* Add: Spielfrei-Ausgabe in Paarungslisten
+
 ## Version 0.0.3 (2022-05-01)
 
 * Fix: Datumsausgaben im Backend von JJJJTTMM geändert auf TT.MM.JJJJ

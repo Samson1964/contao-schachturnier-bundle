@@ -84,19 +84,30 @@ class Schachturnier extends \ContentElement
 					// Datensätze verarbeiten
 					while($objResult->next())
 					{
+						// Spielernamen erzeugen inkl. Ausgeschieden-Markierung
+						$weiss = $spieler[$objResult->whiteName]['ausgeschieden'] ? '<s>'.$spieler[$objResult->whiteName]['name'].'</s>' : $spieler[$objResult->whiteName]['name'];
+						$schwarz = $spieler[$objResult->blackName]['ausgeschieden'] ? '<s>'.$spieler[$objResult->blackName]['name'].'</s>' : $spieler[$objResult->blackName]['name'];
+						// Absagen markieren
+						$weiss = self::Absage($weiss, $objResult->absagen, 'white');
+						$schwarz = self::Absage($schwarz, $objResult->absagen, 'black');
+
 						$paarung[$objResult->round][$objResult->board] = array
 						(
-							'weiss_nr'     => $objResult->whiteName,
-							'weiss_name'   => $spieler[$objResult->whiteName]['ausgeschieden'] ? '<s>'.$spieler[$objResult->whiteName]['name'].'</s>' : $spieler[$objResult->whiteName]['name'],
-							'weiss_dwz'    => $spieler[$objResult->whiteName]['dwz'],
-							'schwarz_nr'   => $objResult->blackName,
-							'schwarz_name' => $spieler[$objResult->blackName]['ausgeschieden'] ? '<s>'.$spieler[$objResult->blackName]['name'].'</s>' : $spieler[$objResult->blackName]['name'],
-							'schwarz_dwz'  => $spieler[$objResult->blackName]['dwz'],
-							'datum'        => $objResult->datum ? date('d.m.Y', $objResult->datum) : '',
-							'ergebnis'     => $objResult->result ? $objResult->result : '-',
-							'info'         => $objResult->info,
+							'weiss_id'       => $objResult->whiteName,
+							'weiss_name'     => $weiss,
+							'weiss_dwz'      => $spieler[$objResult->whiteName]['dwz'],
+							'weiss_nummer'   => $spieler[$objResult->whiteName]['nummer'],
+							'schwarz_id'     => $objResult->blackName,
+							'schwarz_name'   => $schwarz,
+							'schwarz_dwz'    => $spieler[$objResult->blackName]['dwz'],
+							'schwarz_nummer' => $spieler[$objResult->blackName]['nummer'],
+							'datum'          => $objResult->datum ? date('d.m.Y', $objResult->datum) : '',
+							'ergebnis'       => $objResult->result ? $objResult->result : '-',
+							'info'           => $objResult->info,
 						);
 					}
+					// Spielfrei ergänzen
+					$paarung = self::Spielfreisuche($paarung, $spieler);
 				}
 
 				// Ausgabedaten zusammenbauen
@@ -117,6 +128,98 @@ class Schachturnier extends \ContentElement
 
 		return;
 
+	}
+
+	function Spielfreisuche($paarung, $spieler)
+	{
+		// Spieler laden
+		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? AND published = ?')
+		                                     ->execute($this->schachturnier, 1);
+		if($objResult->numRows % 2 > 0)
+		{
+			// Ungerade Teilnehmerzahl, dann nach spielfrei suchen
+			// Array für Teilnehmernummern für alle Runden anlegen
+			$spielfrei = array();
+			
+			foreach($paarung as $runde => $arrBrett)
+			{
+				if(!isset($spielfrei[$runde]))
+				{
+					// Teilnehmerliste für diese Runde anlegen
+					for($x = 1; $x <= $objResult->numRows; $x++)
+					{
+						$spielfrei[$runde][$x] = true;
+					}
+				}
+				foreach($arrBrett as $brett => $item)
+				{
+					$spielfrei[$runde][$item['weiss_nummer']] = false;
+					$spielfrei[$runde][$item['schwarz_nummer']] = false;
+				}
+			}
+			// In den Paarungen spielfrei ergänzen
+			foreach($spielfrei as $runde => $arrNummer)
+			{
+				foreach($arrNummer as $nummer => $item)
+				{
+					if($item)
+					{
+						// Spieler laden
+						$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? AND nummer = ?')
+						                                     ->execute($this->schachturnier, $nummer);
+						if($objResult->numRows)
+						{
+							// Spielernamen erzeugen inkl. Ausgeschieden-Markierung
+							$weiss = $objResult->ausgeschieden ? '<s>'.$objResult->firstname.' '.$objResult->lastname.'</s>' : $objResult->firstname.' '.$objResult->lastname;
+							$schwarz = 'spielfrei';
+							
+							$paarung[$runde][] = array
+							(
+								'weiss_id'       => $objResult->id,
+								'weiss_name'     => $weiss,
+								'weiss_dwz'      => $objResult->dwz,
+								'weiss_nummer'   => $objResult->nummer,
+								'schwarz_id'     => 0,
+								'schwarz_name'   => $schwarz,
+								'schwarz_dwz'    => '',
+								'schwarz_nummer' => '',
+								'datum'          => '',
+								'ergebnis'       => '',
+								'info'           => '',
+							);
+						}
+					}
+				}
+			}
+		}
+		return $paarung;
+	}
+
+	function Absage($name, $absagen, $farbe)
+	{
+		if($absagen)
+		{
+			$absage = (array)unserialize($absagen);
+			$absagedatum = 0;
+			$absageaktiv = false;
+			// Absagen durchsuchen nach Farbe und jüngste, aktive Absage speichern
+			foreach($absage as $item)
+			{
+				if($item['wer'] == $farbe && $item['aktiv'])
+				{
+					if($item['datum'] > $absagedatum)
+					{
+						$absagedatum = $item['datum'];
+						$absageaktiv = true;
+					}
+				}
+			}
+			if($absageaktiv)
+			{
+				return $name.' (E)';
+			}
+		}
+		return $name;
 	}
 
 	function getSpieler()
@@ -140,6 +243,7 @@ class Schachturnier extends \ContentElement
 					'ausgeschieden' => $objResult->ausgeschieden,
 					'dwz'           => $objResult->dwz,
 					'elo'           => $objResult->elo,
+					'nummer'        => $objResult->nummer,
 					'bild'          => $objResult->singleSRC
 				);
 			}
