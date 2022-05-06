@@ -14,6 +14,7 @@ $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['nummer'] = array('Startnummer',
 
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['status_legend'] = 'Status';
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['ausgeschieden'] = array('Ausgeschieden', 'Der Spieler ist aus dem Turnier ausgeschieden und wird in Listen durchgestrichen dargestellt.');
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['freilos'] = array('Freilos', 'Spieler als Dummy-Eintrag (Freilos) führen. Der Nachname wird für die Anzeige übernommen, der Vorname ignoriert.');
 
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['rating_legend'] = 'Wertungszahlen';
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['dwz'] = array('DWZ', 'Deutsche Wertungszahl');

@@ -366,14 +366,44 @@ class tl_schachturnier_partien extends Backend
 	 */
 	public function loadDate($value)
 	{
-		return strtotime(date('Y-m-d', $value) . ' 00:00:00');
+		if($value) return strtotime(date('Y-m-d', $value) . ' 00:00:00');
+		else return '';
 	}
 
 	public function listGames($arrRow)
 	{
-		$temp = '<div class="tl_content_left">';
-		$temp .= '<span style="display:inline-block; width:100px;">'.$arrRow['round'].'.'.$arrRow['board'].'</span>';
-		$temp .= self::getPlayer($arrRow['whiteName']).' - '.self::getPlayer($arrRow['blackName']);
+		$weiss = self::getPlayer($arrRow['whiteName']);
+		$schwarz = self::getPlayer($arrRow['blackName']);
+
+		$trenner = ' - ';
+		if($arrRow['result'])
+		{
+			$css = 'color:green;';
+			$trenner = ' '.$arrRow['result'].' ';
+		}	
+		elseif(!$weiss || !$schwarz) $css = 'color:green;';
+		else $css = 'color:red;';
+
+		$temp = '<div class="tl_content_left" style="'.$css.'">';
+		$temp .= '<span style="display:inline-block; width:5%;">'.$arrRow['round'].'.'.$arrRow['board'].'</span>';
+		if($weiss && $schwarz) 
+		{
+			$temp .= '<span style="display:inline-block; width:20%;">'.$weiss.'</span>';
+			$temp .= '<span style="display:inline-block; width:10%;">'.$trenner.'</span>';
+			$temp .= '<span style="display:inline-block; width:20%;">'.$schwarz.'</span>';
+		}
+		elseif($weiss) 
+		{
+			$temp .= '<span style="display:inline-block; width:20%; font-weight:bold">Spielfrei:</span>';
+			$temp .= '<span style="display:inline-block; width:10%;"></span>';
+			$temp .= '<span style="display:inline-block; width:20%;">'.$weiss.'</span>';
+		}
+		elseif($schwarz) 
+		{
+			$temp .= '<span style="display:inline-block; width:20%; font-weight:bold">Spielfrei:</span>';
+			$temp .= '<span style="display:inline-block; width:10%;"></span>';
+			$temp .= '<span style="display:inline-block; width:20%;">'.$schwarz.'</span>';
+		}
 		return $temp.'</div>';
 	}
 
@@ -398,7 +428,12 @@ class tl_schachturnier_partien extends Backend
 		$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_spieler WHERE id = ?")
 		                                     ->execute($id);
 
-		if($objPlayer->numRows == 1) return '('.$objPlayer->nummer.') '.$objPlayer->firstname.' '.$objPlayer->lastname;
+		if($objPlayer->numRows)
+		{
+			if($objPlayer->freilos) $name = '';
+			else $name = '('.$objPlayer->nummer.') '.$objPlayer->firstname.' '.$objPlayer->lastname;
+			return $name;
+		}
 		else return $id;
 
 	}

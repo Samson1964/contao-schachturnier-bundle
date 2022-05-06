@@ -17,7 +17,7 @@ class Paarungsgenerator extends \Frontend
 		                                     ->execute(\Input::get('id'));
 
 		$player = array();
-		while ($objPlayer->next())
+		while($objPlayer->next())
 		{
 			$player[$objPlayer->nummer] = array
 			(

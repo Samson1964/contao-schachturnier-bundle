@@ -2,6 +2,11 @@
 	margin-bottom: 10px;
 }
 
+.ce_schachturnier tr.freilos {
+	background-color: #C0C0C0;
+	color: #2C2C2C;
+}
+
 .ce_schachturnier td.board {
 	width: 4%;
 }

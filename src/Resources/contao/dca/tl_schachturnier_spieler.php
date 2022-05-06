@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			'mode'                    => 4,
 			'disableGrouping'         => true,
 			'headerFields'            => array('title'),
-			'fields'                  => array('nummer ASC', 'lastname ASC'),
+			'fields'                  => array('ABS(nummer)', 'lastname ASC'),
 			'panelLayout'             => 'filter;sort,search,limit',
 			'child_record_callback'   => array('tl_schachturnier_spieler', 'listPlayers'),  
 		),
@@ -101,7 +101,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('addImage'),
-		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},ausgeschieden;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},ausgeschieden,freilos;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Unterpaletten
@@ -154,6 +154,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['nummer'],
 			'exclude'                 => true,
 			'search'                  => true,
+			'sorting'                 => true,
 			'flag'                    => 1,
 			'inputType'               => 'text',
 			'eval'                    => array
@@ -229,7 +230,23 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			(
 				'doNotCopy'           => false,
 				'mandatory'           => false, 
-				'tl_class'            => 'w50 m12'
+				'tl_class'            => 'w50 m12',
+				'boolean'             => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		), 
+		'freilos' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['freilos'],
+			'default'                 => '',
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'doNotCopy'           => false,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50 m12',
+				'boolean'             => true
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		), 
@@ -307,7 +324,8 @@ class tl_schachturnier_spieler extends Backend
 		$temp = '<div class="tl_content_left">';
 		$temp .= '['.$arrRow['nummer'].'] ';
 		if($arrRow['ausgeschieden']) $temp .= '<s>';
-		$temp .= $arrRow['lastname'].', '.$arrRow['firstname'];
+		if($arrRow['freilos']) $temp .= '<span style="color:red">'.$arrRow['lastname'].'</span>';
+		else $temp .= $arrRow['lastname'].', '.$arrRow['firstname'];
 		if($arrRow['ausgeschieden']) $temp .= '</s>';
 		return $temp.'</div>';
 	}

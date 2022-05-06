@@ -1,5 +1,13 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.0.5 (2022-05-06)
+
+* Add: Spieler als Dummy-Eintrag markieren (Freilos, Spielfrei)
+* Fix: In Paarungsliste spielfrei kennzeichnen
+* Fix: Sortierung der Spieler im Backend korrigiert -> 1, 2, 3, ..., 10 statt 1, 10, 2, 3
+* Fix: Alternatives Datum -> Blank anzeigen statt 01.01.1970
+* Add: Paarungsliste im Backend -> Ergebnis ja/nein grün/rot markieren
+
 ## Version 0.0.4 (2022-05-02)
 
 * Add: Absagen als MCW in Paarungen eingebaut

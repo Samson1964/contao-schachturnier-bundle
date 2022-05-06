@@ -19,7 +19,7 @@
 </thead>
 <tbody>
 <?php foreach($this->tabelle as $item): ?>
-	<tr>
+	<tr<?php if($item['css']): ?> class="<?= $item['css'] ?>"<?php endif; ?>>
 		<td><?= $item['nummer'] ?></td>
 		<td><?= $item['name'] ?></td>
 		<?php if($this->view_land): ?><td><?= $item['land'] ?></td><?php endif; ?>

@@ -46,10 +46,15 @@ class Schachturnier extends \ContentElement
 					while($objResult->next())
 					{
 						$nummer++;
+						// Name generieren
+						if($objResult->freilos) $name = $objResult->lastname;
+						else $name = $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname;
+						
 						$daten[] = array
 						(
+							'css'    => $objResult->freilos ? 'freilos' : '',
 							'nummer' => $nummer,
-							'name'   => $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname,
+							'name'   => $name,
 							'titel'  => $objResult->titel,
 							'land'   => $objResult->land,
 							'verein' => $objResult->verein,
@@ -61,6 +66,7 @@ class Schachturnier extends \ContentElement
 				}
 				break;
 			case 'cross_nr'   : // Kreuztabelle (nach Nummern)
+				$spieler = self::getSpieler();
 				break;
 			case 'cross_rang' : // Kreuztabelle (nach Rang)
 				break;
@@ -90,9 +96,22 @@ class Schachturnier extends \ContentElement
 						// Absagen markieren
 						$weiss = self::Absage($weiss, $objResult->absagen, 'white');
 						$schwarz = self::Absage($schwarz, $objResult->absagen, 'black');
+						// Spielfrei markieren
+						if($spieler[$objResult->whiteName]['freilos'])
+						{
+							$weiss = $spieler[$objResult->whiteName]['nachname'];
+							$css = 'freilos';
+						}
+						elseif($spieler[$objResult->blackName]['freilos'])
+						{
+							$schwarz = $spieler[$objResult->blackName]['nachname'];
+							$css = 'freilos';
+						}
+						else $css = '';
 
 						$paarung[$objResult->round][$objResult->board] = array
 						(
+							'css'            => $css,
 							'weiss_id'       => $objResult->whiteName,
 							'weiss_name'     => $weiss,
 							'weiss_dwz'      => $spieler[$objResult->whiteName]['dwz'],
@@ -107,7 +126,7 @@ class Schachturnier extends \ContentElement
 						);
 					}
 					// Spielfrei ergänzen
-					$paarung = self::Spielfreisuche($paarung, $spieler);
+					//$paarung = self::Spielfreisuche($paarung, $spieler);
 				}
 
 				// Ausgabedaten zusammenbauen
@@ -128,71 +147,6 @@ class Schachturnier extends \ContentElement
 
 		return;
 
-	}
-
-	function Spielfreisuche($paarung, $spieler)
-	{
-		// Spieler laden
-		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? AND published = ?')
-		                                     ->execute($this->schachturnier, 1);
-		if($objResult->numRows % 2 > 0)
-		{
-			// Ungerade Teilnehmerzahl, dann nach spielfrei suchen
-			// Array für Teilnehmernummern für alle Runden anlegen
-			$spielfrei = array();
-			
-			foreach($paarung as $runde => $arrBrett)
-			{
-				if(!isset($spielfrei[$runde]))
-				{
-					// Teilnehmerliste für diese Runde anlegen
-					for($x = 1; $x <= $objResult->numRows; $x++)
-					{
-						$spielfrei[$runde][$x] = true;
-					}
-				}
-				foreach($arrBrett as $brett => $item)
-				{
-					$spielfrei[$runde][$item['weiss_nummer']] = false;
-					$spielfrei[$runde][$item['schwarz_nummer']] = false;
-				}
-			}
-			// In den Paarungen spielfrei ergänzen
-			foreach($spielfrei as $runde => $arrNummer)
-			{
-				foreach($arrNummer as $nummer => $item)
-				{
-					if($item)
-					{
-						// Spieler laden
-						$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? AND nummer = ?')
-						                                     ->execute($this->schachturnier, $nummer);
-						if($objResult->numRows)
-						{
-							// Spielernamen erzeugen inkl. Ausgeschieden-Markierung
-							$weiss = $objResult->ausgeschieden ? '<s>'.$objResult->firstname.' '.$objResult->lastname.'</s>' : $objResult->firstname.' '.$objResult->lastname;
-							$schwarz = 'spielfrei';
-							
-							$paarung[$runde][] = array
-							(
-								'weiss_id'       => $objResult->id,
-								'weiss_name'     => $weiss,
-								'weiss_dwz'      => $objResult->dwz,
-								'weiss_nummer'   => $objResult->nummer,
-								'schwarz_id'     => 0,
-								'schwarz_name'   => $schwarz,
-								'schwarz_dwz'    => '',
-								'schwarz_nummer' => '',
-								'datum'          => '',
-								'ergebnis'       => '',
-								'info'           => '',
-							);
-						}
-					}
-				}
-			}
-		}
-		return $paarung;
 	}
 
 	function Absage($name, $absagen, $farbe)
@@ -237,10 +191,13 @@ class Schachturnier extends \ContentElement
 				$spieler[$objResult->id] = array
 				(
 					'name'          => $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname,
+					'vorname'       => $objResult->firstname,
+					'nachname'      => $objResult->lastname,
 					'titel'         => $objResult->titel,
 					'land'          => $objResult->land,
 					'verein'        => $objResult->verein,
 					'ausgeschieden' => $objResult->ausgeschieden,
+					'freilos'       => $objResult->freilos,
 					'dwz'           => $objResult->dwz,
 					'elo'           => $objResult->elo,
 					'nummer'        => $objResult->nummer,
@@ -271,4 +228,33 @@ class Schachturnier extends \ContentElement
 		}
 		return $termin;
 	}
+
+	function getPaarungen()
+	{
+		// Spieler laden
+		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ?')
+		                                     ->execute($this->schachturnier, 1);
+		
+		$paarungen = array();
+		if($objResult->numRows)
+		{
+			// Datensätze verarbeiten
+			while($objResult->next())
+			{
+				$paarungen[$objResult->id] = array
+				(
+					'whiteName'     => $objResult->whiteName,
+					'blackName'     => $objResult->blackName,
+					'round'         => $objResult->round,
+					'board'         => $objResult->board,
+					'datum'         => $objResult->datum,
+					'result'        => $objResult->result,
+					'info'          => $objResult->info,
+					'pgn'           => $objResult->pgn
+				);
+			}
+		}
+		return $paarungen;
+	}
+
 }

@@ -13,7 +13,7 @@
 		<th colspan="6"><?= $runde ?>. Runde <?php if($this->termine[$runde]) echo 'am '.$this->termine[$runde]['datum']; ?></th>
 	</tr>
 	<?php foreach($arrRunde as $brett => $arrBrett): ?>
-		<tr>
+		<tr<?php if($arrBrett['css']): ?> class="<?= $arrBrett['css'] ?>"<?php endif; ?>>
 			<td class="board"><?= $brett ?></td>
 			<td class="name"><?php if($arrBrett['weiss_name']) echo $arrBrett['weiss_name']; else echo $arrBrett['weiss_nummer']; ?></td>
 			<td class="rating"><?= $arrBrett['weiss_dwz'] ?></td>
