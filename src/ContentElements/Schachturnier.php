@@ -65,6 +65,114 @@ class Schachturnier extends \ContentElement
 					}
 				}
 				break;
+			case 'ranking'    : // Rangliste
+				$this->strTemplate = 'ce_schachturnier_rangliste';
+				$this->Template = new \FrontendTemplate($this->strTemplate);
+
+				// Spieler laden
+				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? ORDER BY nummer ASC')
+				                                     ->execute($this->schachturnier);
+				$spieler = array();
+				if($objResult->numRows)
+				{
+					// Datensätze verarbeiten
+					while($objResult->next())
+					{
+						// Name generieren
+						if($objResult->freilos) $name = $objResult->lastname;
+						else $name = $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname;
+						
+						if(!$objResult->freilos)
+						{
+							$spieler[$objResult->id] = array
+							(
+								'nummer'  => $objResult->nummer,
+								'name'    => $name,
+								'titel'   => $objResult->titel,
+								'land'    => $objResult->land,
+								'verein'  => $objResult->verein,
+								'dwz'     => $objResult->dwz,
+								'elo'     => $objResult->elo,
+								'bild'    => $objResult->singleSRC,
+								'spiele'  => 0,
+								'2punkte' => 0,
+								'3punkte' => 0,
+								'sobe'    => 0,
+								'buch'    => 0,
+								'siege'   => 0,
+								'partien' => array(),
+								'platz'   => 0
+							);
+						}
+					}
+				}
+
+				// Paarungen laden
+				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ?')
+				                                     ->execute($this->schachturnier, 1);
+				if($objResult->numRows)
+				{
+					// Datensätze verarbeiten
+					while($objResult->next())
+					{
+						switch($objResult->result)
+						{
+							case '1:0':   
+							case '+:-':
+								$spieler[$objResult->whiteName]['spiele'] += 1;
+								$spieler[$objResult->whiteName]['2punkte'] += 1;
+								$spieler[$objResult->whiteName]['3punkte'] += 3;
+								$spieler[$objResult->whiteName]['siege'] += 1;
+								$spieler[$objResult->whiteName]['partien'][] = array('ergebnis' => 1, 'gegner' => $objResult->blackName);
+								$spieler[$objResult->blackName]['spiele'] += 1; 
+								$spieler[$objResult->blackName]['partien'][] = array('ergebnis' => 0, 'gegner' => $objResult->whiteName);
+								break;
+							case '0:1':
+							case '-:+':
+								$spieler[$objResult->whiteName]['spiele'] += 1;
+								$spieler[$objResult->whiteName]['partien'][] = array('ergebnis' => 0, 'gegner' => $objResult->blackName);
+								$spieler[$objResult->blackName]['spiele'] += 1;
+								$spieler[$objResult->blackName]['2punkte'] += 1;
+								$spieler[$objResult->blackName]['3punkte'] += 3;
+								$spieler[$objResult->blackName]['siege'] += 1;
+								$spieler[$objResult->blackName]['partien'][] = array('ergebnis' => 1, 'gegner' => $objResult->whiteName);
+								break;
+							case '½:½':
+								$spieler[$objResult->whiteName]['spiele'] += 1;
+								$spieler[$objResult->whiteName]['2punkte'] += .5;
+								$spieler[$objResult->whiteName]['3punkte'] += 1;
+								$spieler[$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'gegner' => $objResult->blackName);
+								$spieler[$objResult->blackName]['spiele'] += 1;
+								$spieler[$objResult->blackName]['2punkte'] += .5;
+								$spieler[$objResult->blackName]['3punkte'] += 1;
+								$spieler[$objResult->blackName]['partien'][] = array('ergebnis' => 0.5, 'gegner' => $objResult->whiteName);
+								break;
+							case '-:-':
+								$spieler[$objResult->whiteName]['spiele'] += 1;
+								$spieler[$objResult->whiteName]['partien'][] = array('ergebnis' => 0, 'gegner' => $objResult->blackName);
+								$spieler[$objResult->blackName]['spiele'] += 1;
+								$spieler[$objResult->blackName]['partien'][] = array('ergebnis' => 0, 'gegner' => $objResult->whiteName);
+								break;
+							default:
+						}
+					}
+				}
+
+				// Sonneborn-Berger-Wertung berechnen
+				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::SonnebornBergerWertung($spieler);
+				// Buchholz-Wertung berechnen
+				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::BuchholzWertung($spieler);
+
+				// Turnier-Stammdaten laden
+				$objTurnier = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier WHERE id = ?')
+				                                      ->execute($this->schachturnier);
+				// Spieler sortieren nach gewünschter Wertungsreihenfolge
+				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Rangliste($spieler, unserialize($objTurnier->wertungen));
+				
+				// Ausgabedaten zusammenbauen
+				$daten = $spieler;
+				break;
+
 			case 'cross_nr'   : // Kreuztabelle (nach Nummern)
 				$spieler = self::getSpieler();
 				break;
@@ -170,7 +278,7 @@ class Schachturnier extends \ContentElement
 			}
 			if($absageaktiv)
 			{
-				return $name.' (E)';
+				return '<span class="abgesagt" title="Spieler ist entschuldigt">'.$name.'</span> (E)';
 			}
 		}
 		return $name;

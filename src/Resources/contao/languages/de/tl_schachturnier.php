@@ -15,15 +15,12 @@ $GLOBALS['TL_LANG']['tl_schachturnier']['date_legend'] = 'Zeitraum';
 $GLOBALS['TL_LANG']['tl_schachturnier']['fromDate'] = array('Beginn', 'Beginndatum im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_schachturnier']['toDate'] = array('Ende', 'Endedatum im Format TT.MM.JJJJ (kann leerbleiben bei einem eintägigen Turnier)');
 
+$GLOBALS['TL_LANG']['tl_schachturnier']['wertungen_legend'] = 'Wertungsreihenfolge';
+$GLOBALS['TL_LANG']['tl_schachturnier']['wertungen'] = array('Wertungen aktivieren', 'Legen Sie hier die Wertungen und deren Reihenfolge fest.');
+
 $GLOBALS['TL_LANG']['tl_schachturnier']['publish_legend'] = 'Veröffentlichung und Turnierabschluß';
 $GLOBALS['TL_LANG']['tl_schachturnier']['complete'] = array('Komplett', 'Der Turnier ist vollständig erfaßt und alle Daten der Kindtabellen sind komplett.');
 $GLOBALS['TL_LANG']['tl_schachturnier']['published'] = array('Veröffentlicht', 'Turnier veröffentlicht');
-
-$GLOBALS['TL_LANG']['tl_schachturnier']['typen'] = array
-(
-	'rd' => 'Rundenturnier',
-	'ko' => 'K.o.-Turnier / Schweizer System',
-);
 
 /**
  * Buttons für Operationen
@@ -39,3 +36,22 @@ $GLOBALS['TL_LANG']['tl_schachturnier']['show'] = array('Turnierdetails anzeigen
 $GLOBALS['TL_LANG']['tl_schachturnier']['editTermine'] = array('Termine bearbeiten', 'Termine des Turniers %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_schachturnier']['editSpieler'] = array('Spieler bearbeiten', 'Spieler des Turniers %s bearbeiten');
 $GLOBALS['TL_LANG']['tl_schachturnier']['editPartien'] = array('Paarungen bearbeiten', 'Paarungen des Turniers %s bearbeiten');
+
+/**
+ * Buttons für Optionen
+ */
+
+$GLOBALS['TL_LANG']['tl_schachturnier']['typen'] = array
+(
+	'rd' => 'Rundenturnier',
+	'ko' => 'K.o.-Turnier / Schweizer System',
+);
+
+$GLOBALS['TL_LANG']['tl_schachturnier']['wertungen_options'] = array
+(
+	'2punkte' => 'Zwei-Punkte-System (Sieg = 1, Remis = ½)',
+	'3punkte' => 'Drei-Punkte-System (Sieg = 3, Remis = 1)',
+	'sobe'    => 'Sonneborn-Berger-Wertung',
+	'siege'   => 'Anzahl der Siege',
+	'buch'    => 'Buchholz-Wertung',
+);

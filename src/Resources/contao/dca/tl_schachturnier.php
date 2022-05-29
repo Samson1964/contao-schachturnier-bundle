@@ -117,7 +117,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate;{publish_legend},published,complete'
+		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate;{wertungen_legend},wertungen;{publish_legend},published,complete'
 	),
 
 	// Fields
@@ -209,6 +209,19 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				array('tl_schachturnier', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),  
+		'wertungen' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['wertungen'],
+			'exclude'                 => true,
+			'options'                 => &$GLOBALS['TL_LANG']['tl_schachturnier']['wertungen_options'],
+			'inputType'               => 'checkboxWizard',
+			'eval'                    => array
+			(
+				'multiple'            => true,
+				'tl_class'            => 'long',
+			),
+			'sql'                     => "blob NULL"
 		),  
 		'complete' => array
 		(

@@ -2,9 +2,19 @@
 	margin-bottom: 10px;
 }
 
+.ce_schachturnier tr {
+	background-color: #ffffff;
+	color: #000000;
+}
+
+.ce_schachturnier tr.kopf {
+	background-color: #3A3A3A;
+	color: #ffffff;
+}
+
 .ce_schachturnier tr.freilos {
-	background-color: #C0C0C0;
-	color: #2C2C2C;
+	background-color: #F7F7F7;
+	color: #5B5B5B;
 }
 
 .ce_schachturnier td.board {
@@ -28,3 +38,6 @@
 	font-size: 12px;
 }
 
+.ce_schachturnier span.abgesagt {
+	color: #FF0000;
+}

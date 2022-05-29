@@ -9,7 +9,7 @@
 <table>
 <thead>
 <?php foreach($this->tabelle as $runde => $arrRunde): ?>
-	<tr>
+	<tr class="kopf">
 		<th colspan="6"><?= $runde ?>. Runde <?php if($this->termine[$runde]) echo 'am '.$this->termine[$runde]['datum']; ?></th>
 	</tr>
 	<?php foreach($arrRunde as $brett => $arrBrett): ?>

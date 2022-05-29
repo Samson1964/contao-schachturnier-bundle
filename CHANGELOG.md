@@ -1,5 +1,13 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.1.0 (2022-05-29)
+
+* Change: Freilos in Teilnehmerliste und Paarungsliste im Frontend nicht mit grauem Hintergrund ausgeben
+* Add: CSS für die Kopfzeile
+* Add: CSS-Klasse für als abgesagt (E) markierte Spieler
+* Add: tl_schachturnier.wertungen - Wertungsreihenfolge einstellen
+* Add: Ausgabe einer Rangliste
+
 ## Version 0.0.5 (2022-05-06)
 
 * Add: Spieler als Dummy-Eintrag markieren (Freilos, Spielfrei)

@@ -9,23 +9,27 @@
 <table>
 <thead>
 	<tr class="kopf">
-		<th>Nr.</th>
+		<th>Pl.</th>
 		<th>Name</th>
 		<?php if($this->view_land): ?><th>Land</th><?php endif; ?>
 		<?php if($this->view_elo): ?><th>Elo</th><?php endif; ?>
 		<?php if($this->view_dwz): ?><th>DWZ</th><?php endif; ?>
 		<?php if($this->view_verein): ?><th>Verein</th><?php endif; ?>
+		<th>Punkte</th>
+		<th>SoBe</th>
 	</tr>
 </thead>
 <tbody>
 <?php foreach($this->tabelle as $item): ?>
 	<tr<?php if($item['css']): ?> class="<?= $item['css'] ?>"<?php endif; ?>>
-		<td><?= $item['nummer'] ?></td>
+		<td><?= $item['platz'] ?></td>
 		<td><?= $item['name'] ?></td>
 		<?php if($this->view_land): ?><td><?= $item['land'] ?></td><?php endif; ?>
 		<?php if($this->view_elo): ?><td><?= $item['elo'] ?></td><?php endif; ?>
 		<?php if($this->view_dwz): ?><td><?= $item['dwz'] ?></td><?php endif; ?>
 		<?php if($this->view_verein): ?><td><?= $item['verein'] ?></td><?php endif; ?>
+		<td><?= str_replace('.', ',', sprintf('%01.1f', $item['2punkte'])) ?>/<?= $item['spiele'] ?></td>
+		<td><?= str_replace('.', ',', sprintf('%01.2f', $item['sobe'])) ?></td>
 	</tr>
 <?php endforeach; ?>
 </tbody>

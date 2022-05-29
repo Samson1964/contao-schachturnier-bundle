@@ -44,11 +44,12 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['schachturnier_mode'] = array
 	'options'                          => array
 	(
 		'subscriber'                   => 'Teilnehmerliste',
+		'pairings'                     => 'Paarungen/Ergebnisse',
+		'ranking'                      => 'Rangliste',
 		'cross_nr'                     => 'Kreuztabelle (nach Nummer)', 
 		'cross_rang'                   => 'Kreuztabelle (nach Rang)', 
 		'progress_nr'                  => 'Fortschrittstabelle (nach Nummer)',
 		'progress_rang'                => 'Fortschrittstabelle (nach Rang)',
-		'pairings'                     => 'Paarungen/Ergebnisse'
 	),
 	'eval'                             => array
 	(
