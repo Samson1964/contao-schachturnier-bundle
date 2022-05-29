@@ -1,10 +1,15 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.2.0 (2022-05-29)
+
+* Fix: Falsche Hintergrundfarbe f√ºr Kopfspalten
+* Add: Ausgabe einer Kreuztabelle nach Rang
+
 ## Version 0.1.0 (2022-05-29)
 
 * Change: Freilos in Teilnehmerliste und Paarungsliste im Frontend nicht mit grauem Hintergrund ausgeben
-* Add: CSS f¸r die Kopfzeile
-* Add: CSS-Klasse f¸r als abgesagt (E) markierte Spieler
+* Add: CSS f√ºr die Kopfzeile
+* Add: CSS-Klasse f√ºr als abgesagt (E) markierte Spieler
 * Add: tl_schachturnier.wertungen - Wertungsreihenfolge einstellen
 * Add: Ausgabe einer Rangliste
 
@@ -14,7 +19,7 @@
 * Fix: In Paarungsliste spielfrei kennzeichnen
 * Fix: Sortierung der Spieler im Backend korrigiert -> 1, 2, 3, ..., 10 statt 1, 10, 2, 3
 * Fix: Alternatives Datum -> Blank anzeigen statt 01.01.1970
-* Add: Paarungsliste im Backend -> Ergebnis ja/nein gr¸n/rot markieren
+* Add: Paarungsliste im Backend -> Ergebnis ja/nein gr√ºn/rot markieren
 
 ## Version 0.0.4 (2022-05-02)
 
@@ -24,9 +29,9 @@
 
 ## Version 0.0.3 (2022-05-01)
 
-* Fix: Datumsausgaben im Backend von JJJJTTMM ge‰ndert auf TT.MM.JJJJ
-* Add: CSS f¸r das Frontend
-* Fix: ‹bersetzungen
+* Fix: Datumsausgaben im Backend von JJJJTTMM ge√§ndert auf TT.MM.JJJJ
+* Add: CSS f√ºr das Frontend
+* Fix: √úbersetzungen
 * Add: Ausgeschieden-Checkbox bei den Spielern
 * Fix: Reload im Inhaltselement deaktiviert
 * Fix: Debug-Ausgaben im Template entfernt

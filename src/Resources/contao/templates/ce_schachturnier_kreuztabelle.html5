@@ -1,0 +1,51 @@
+<?php $this->extend('block_searchable'); ?>
+
+<?php $this->block('content'); ?>
+
+<?php
+	$GLOBALS['TL_CSS'][] = 'bundles/contaoschachturnier/css/default.css';
+	$anzahl = count($this->tabelle);
+?>
+
+<table>
+<thead>
+	<tr class="kopf">
+		<th>Pl.</th>
+		<th>Name</th>
+		<?php if($this->view_land): ?><th>Land</th><?php endif; ?>
+		<?php if($this->view_elo): ?><th>Elo</th><?php endif; ?>
+		<?php if($this->view_dwz): ?><th>DWZ</th><?php endif; ?>
+		<?php if($this->view_verein): ?><th>Verein</th><?php endif; ?>
+		<th>Punkte</th>
+		<th>SoBe</th> 
+		<?php for($x = 1; $x <= $anzahl; $x++): ?>
+			<th class="ergebnis"><?= $x ?></th> 
+		<?php endfor; ?>
+	</tr>
+</thead>
+<tbody>
+<?php foreach($this->tabelle as $item): ?>
+	<tr<?php if($item['css']): ?> class="<?= $item['css'] ?>"<?php endif; ?>>
+		<td><?= $item['platz'] ?></td>
+		<td><?= $item['name'] ?></td>
+		<?php if($this->view_land): ?><td><?= $item['land'] ?></td><?php endif; ?>
+		<?php if($this->view_elo): ?><td><?= $item['elo'] ?></td><?php endif; ?>
+		<?php if($this->view_dwz): ?><td><?= $item['dwz'] ?></td><?php endif; ?>
+		<?php if($this->view_verein): ?><td><?= $item['verein'] ?></td><?php endif; ?>
+		<td><?= str_replace('.', ',', sprintf('%01.1f', $item['2punkte'])) ?>/<?= $item['spiele'] ?></td>
+		<td><?= str_replace('.', ',', sprintf('%01.2f', $item['sobe'])) ?></td>
+		<?php for($x = 1; $x <= $anzahl; $x++): ?>
+			<?php if($item['matrix'][$item['matrix_index']][$x] == '0'): ?>
+				<td class="ergebnis"><?= $item['matrix'][$item['matrix_index']][$x] ?></td> 
+			<?php elseif($item['matrix'][$item['matrix_index']][$x] == 'x'): ?>
+				<td class="ergebnis blindfeld"><?= $item['matrix'][$item['matrix_index']][$x] ?></td> 
+			<?php else: ?>
+				<td class="ergebnis"><?= str_replace('0.5', '½', $item['matrix'][$item['matrix_index']][$x]) ?></td> 
+			<?php endif; ?>
+		<?php endfor; ?>
+	</tr>
+<?php endforeach; ?>
+</tbody>
+</table>
+
+<?php $this->endblock(); ?>
