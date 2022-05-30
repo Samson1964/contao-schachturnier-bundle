@@ -19,10 +19,17 @@ class Helper
 			{
 				foreach($arrSpieler['partien'] as $game)
 				{
-					if($game['ergebnis'] == '+') $ergebnis = 1;
-					elseif($game['ergebnis'] == '-') $ergebnis = 0;
-					elseif($game['ergebnis'] == '=') $ergebnis = 0.5;
-					else $ergebnis = $game['ergebnis'];
+					switch($game['ergebnis'])
+					{
+						case '-':
+							$ergebnis = 0; break;
+						case '=':
+							$ergebnis = 0.5; break;
+						case '+': // Darf nicht an erster Stelle stehen, weil 0 als + interpretiert wird
+							$ergebnis = 1; break;
+						default: 
+							$ergebnis = $game['ergebnis'];
+					}
 					
 					$punkteGegner = $spieler['id'.$game['gegner']]['2punkte'] * $ergebnis;
 					$spieler[$id]['sobe'] += $punkteGegner;

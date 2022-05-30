@@ -1,5 +1,9 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.2.1 (2022-05-30)
+
+* Fix: Sonneborn-Berger-Wertung wird falsch berechnet
+
 ## Version 0.2.0 (2022-05-29)
 
 * Fix: Falsche Hintergrundfarbe für Kopfspalten
