@@ -47,6 +47,14 @@
 	color: #FF0000;
 }
 
+.ce_schachturnier tr.aufsteiger {
+	background-color: #80FF80;
+}
+
+.ce_schachturnier tr.absteiger {
+	background-color: #FF8080;
+}
+
 .ce_schachturnier th.ergebnis,
 .ce_schachturnier td.ergebnis {
 	min-width: 22px;

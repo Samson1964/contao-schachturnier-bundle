@@ -18,6 +18,10 @@ $GLOBALS['TL_LANG']['tl_schachturnier']['toDate'] = array('Ende', 'Endedatum im 
 $GLOBALS['TL_LANG']['tl_schachturnier']['wertungen_legend'] = 'Wertungsreihenfolge';
 $GLOBALS['TL_LANG']['tl_schachturnier']['wertungen'] = array('Wertungen aktivieren', 'Legen Sie hier die Wertungen und deren Reihenfolge fest.');
 
+$GLOBALS['TL_LANG']['tl_schachturnier']['aufabstieg_legend'] = 'Auf- und Absteiger';
+$GLOBALS['TL_LANG']['tl_schachturnier']['aufsteiger'] = array('Aufsteiger', 'Anzahl der Aufsteiger. Die ersten x Plätze in Ranglisten werden grün markiert. In den Einstellungen eines Spielers können abweichende Optionen aktiviert werden.');
+$GLOBALS['TL_LANG']['tl_schachturnier']['absteiger'] = array('Absteiger', 'Anzahl der Absteiger. Die letzten x Plätze in Ranglisten werden rot markiert. In den Einstellungen eines Spielers können abweichende Optionen aktiviert werden.');
+
 $GLOBALS['TL_LANG']['tl_schachturnier']['publish_legend'] = 'Veröffentlichung und Turnierabschluß';
 $GLOBALS['TL_LANG']['tl_schachturnier']['complete'] = array('Komplett', 'Der Turnier ist vollständig erfaßt und alle Daten der Kindtabellen sind komplett.');
 $GLOBALS['TL_LANG']['tl_schachturnier']['published'] = array('Veröffentlicht', 'Turnier veröffentlicht');

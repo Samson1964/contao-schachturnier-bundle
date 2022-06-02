@@ -117,7 +117,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate;{wertungen_legend},wertungen;{publish_legend},published,complete'
+		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate;{wertungen_legend},wertungen;{aufabstieg_legend:hide},aufsteiger,absteiger;{publish_legend},published,complete'
 	),
 
 	// Fields
@@ -222,6 +222,36 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'long',
 			),
 			'sql'                     => "blob NULL"
+		),  
+		'aufsteiger' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['aufsteiger'],
+			'exclude'                 => true,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'rgxp'                => 'natural',
+				'mandatory'           => false,
+				'doNotCopy'           => false,
+				'maxlength'           => 3,
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "int(3) unsigned NOT NULL default '0'"
+		),  
+		'absteiger' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['absteiger'],
+			'exclude'                 => true,
+			'inputType'               => 'text',
+			'eval'                    => array
+			(
+				'rgxp'                => 'natural',
+				'mandatory'           => false,
+				'doNotCopy'           => false,
+				'maxlength'           => 3,
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "int(3) unsigned NOT NULL default '0'"
 		),  
 		'complete' => array
 		(

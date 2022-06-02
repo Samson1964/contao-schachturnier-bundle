@@ -101,7 +101,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('addImage'),
-		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},ausgeschieden,freilos;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},ausgeschieden,freilos;{qualifikationen_legend},unaufsteigbar,unabsteigbar,aufsteiger,absteiger;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Unterpaletten
@@ -250,6 +250,64 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
 		), 
+		'unaufsteigbar' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['unaufsteigbar'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'doNotCopy'           => false,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50 m12',
+				'boolean'             => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		), 
+		'unabsteigbar' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['unabsteigbar'],
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'doNotCopy'           => false,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50 m12',
+				'boolean'             => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		), 
+		'aufsteiger' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['aufsteiger'],
+			'default'                 => '',
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'doNotCopy'           => false,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50 m12',
+				'boolean'             => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		), 
+		'absteiger' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['absteiger'],
+			'default'                 => '',
+			'exclude'                 => true,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'doNotCopy'           => false,
+				'mandatory'           => false, 
+				'tl_class'            => 'w50 m12',
+				'boolean'             => true
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		), 
 		'addImage' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['addImage'],
@@ -322,11 +380,20 @@ class tl_schachturnier_spieler extends Backend
 	public function listPlayers($arrRow)
 	{
 		$temp = '<div class="tl_content_left">';
-		$temp .= '['.$arrRow['nummer'].'] ';
+		$temp .= '<span style="display:inline-block; width:200px;">';
+		$temp .= '['.$arrRow['nummer'].'] '; // Startnummer ausgeben
+		// Ausgeschieden-Status mit Spielername
 		if($arrRow['ausgeschieden']) $temp .= '<s>';
 		if($arrRow['freilos']) $temp .= '<span style="color:red">'.$arrRow['lastname'].'</span>';
 		else $temp .= $arrRow['lastname'].', '.$arrRow['firstname'];
 		if($arrRow['ausgeschieden']) $temp .= '</s>';
+		$temp .= '</span>';
+		// Qualifikations-Status
+		if($arrRow['unaufsteigbar']) $temp .= '<img src="bundles/contaoschachturnier/images/nicht_oben.png" title="Spieler kann/darf nicht aufsteigen">';
+		if($arrRow['unabsteigbar']) $temp .= '<img src="bundles/contaoschachturnier/images/nicht_unten.png" title="Spieler kann/darf nicht absteigen">';
+		if($arrRow['aufsteiger']) $temp .= '<img src="bundles/contaoschachturnier/images/oben.png" title="Spieler muß aufsteigen (Zwangsaufstieg)">';
+		if($arrRow['absteiger']) $temp .= '<img src="bundles/contaoschachturnier/images/unten.png" title="Spieler muß absteigen (Zwangsabstieg)">';
+
 		return $temp.'</div>';
 	}
 

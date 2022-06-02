@@ -99,6 +99,75 @@ class Helper
 	}
 
 	/***********************
+	 * Funktion AufAbsteiger
+	 * Markiert die Auf- und Absteiger im Spieler-Array, d.h. beim Feld css wird die Klasse aufsteiger oder absteiger hinzugefügt
+	 * @param array: Spieler-Array
+	 * @retun array: Modifiziertes Spieler-Array
+	 */
+	public function AufAbsteiger($spieler, $aufsteiger = 0, $absteiger = 0)
+	{
+
+		// Aufsteiger markieren, Spieler-Array von vorn nach hinten durchlaufen
+		$index = 1;
+		foreach($spieler as $id => $arrSpieler)
+		{
+			// Spieler wurde als Aufsteiger festgelegt (zählt bei normalen Aufsteigern mit)
+			if($spieler[$id]['aufsteiger'])
+			{
+				$spieler[$id]['css'] .= 'aufsteiger ';
+			}
+
+			// Aufsteigerplatz gefunden, falls innerhalb der Berechtigten und nicht unaufsteigbar
+			if($index <= $aufsteiger && !$spieler[$id]['unaufsteigbar'])
+			{
+				$spieler[$id]['css'] .= 'aufsteiger ';
+				$index++;
+			}
+			elseif($spieler[$id]['unaufsteigbar'])
+			{
+			}
+			else
+			{
+				$index++;
+			}
+
+		}
+		
+
+		// Absteiger markieren, Spieler-Array von hinten nach vorn durchlaufen
+		$index = 1;
+		foreach(array_reverse($spieler) as $id => $arrSpieler)
+		{
+			// Spieler wurde als Absteiger festgelegt (zählt bei normalen Absteigern mit)
+			if($spieler[$id]['absteiger'])
+			{
+				$spieler[$id]['css'] .= 'absteiger ';
+			}
+
+			// Aufsteigerplatz gefunden, falls innerhalb der Berechtigten und nicht unaufsteigbar
+			if($index <= $absteiger && !$spieler[$id]['unabsteigbar'])
+			{
+				$spieler[$id]['css'] .= 'absteiger ';
+				$index++;
+			}
+			elseif($spieler[$id]['unabsteigbar'])
+			{
+			}
+			else
+			{
+				$index++;
+			}
+
+		}
+
+		//echo "<pre>";
+		//print_r(array_reverse($spieler));
+		//echo "</pre>";
+
+		return $spieler;
+	}
+
+	/***********************
 	 * Funktion SpielerErgebnisse
 	 * xxx
 	 * @param array: Spieler-Array
@@ -107,38 +176,43 @@ class Helper
 	public function SpielerErgebnisse($turnierId)
 	{
 		// Spieler laden
-		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? ORDER BY nummer ASC')
-		                                     ->execute($turnierId);
+		$objSpieler = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? ORDER BY nummer ASC')
+		                                      ->execute($turnierId);
 		$spieler = array();
-		if($objResult->numRows)
+		if($objSpieler->numRows)
 		{
 			// Datensätze verarbeiten
-			while($objResult->next())
+			while($objSpieler->next())
 			{
 				// Name generieren
-				if($objResult->freilos) $name = $objResult->lastname;
-				else $name = $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname;
+				if($objSpieler->freilos) $name = $objSpieler->lastname;
+				else $name = $objSpieler->titel ? $objSpieler->titel.' '.$objSpieler->firstname.' '.$objSpieler->lastname : $objSpieler->firstname.' '.$objSpieler->lastname;
 				
-				if(!$objResult->freilos)
+				if(!$objSpieler->freilos)
 				{
-					$spieler['id'.$objResult->id] = array
+					$spieler['id'.$objSpieler->id] = array
 					(
-						'nummer'  => $objResult->nummer,
-						'name'    => $name,
-						'titel'   => $objResult->titel,
-						'land'    => $objResult->land,
-						'verein'  => $objResult->verein,
-						'dwz'     => $objResult->dwz,
-						'elo'     => $objResult->elo,
-						'bild'    => $objResult->singleSRC,
-						'spiele'  => 0,
-						'2punkte' => 0,
-						'3punkte' => 0,
-						'sobe'    => 0,
-						'buch'    => 0,
-						'siege'   => 0,
-						'partien' => array(),
-						'platz'   => 0
+						'css'           => '',
+						'nummer'        => $objSpieler->nummer,
+						'name'          => $name,
+						'titel'         => $objSpieler->titel,
+						'land'          => $objSpieler->land,
+						'verein'        => $objSpieler->verein,
+						'dwz'           => $objSpieler->dwz,
+						'elo'           => $objSpieler->elo,
+						'bild'          => $objSpieler->singleSRC,
+						'unaufsteigbar' => $objSpieler->unaufsteigbar,
+						'unabsteigbar'  => $objSpieler->unabsteigbar,
+						'aufsteiger'    => $objSpieler->aufsteiger,
+						'absteiger'     => $objSpieler->absteiger,
+						'spiele'        => 0,
+						'2punkte'       => 0,
+						'3punkte'       => 0,
+						'sobe'          => 0,
+						'buch'          => 0,
+						'siege'         => 0,
+						'partien'       => array(),
+						'platz'         => 0
 					);
 				}
 			}

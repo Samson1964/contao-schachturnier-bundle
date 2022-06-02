@@ -1,5 +1,10 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.2.2 (2022-06-02)
+
+* Add: Auf- und Absteiger in einem Turnier markieren (in Turniereinstellungen und optional beim Spieler)
+* Add: Zusatzinformationen in der Spielerliste - Status Ab- und Aufstieg
+
 ## Version 0.2.1 (2022-05-30)
 
 * Fix: Sonneborn-Berger-Wertung wird falsch berechnet

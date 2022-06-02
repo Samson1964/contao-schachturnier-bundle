@@ -82,6 +82,9 @@ class Schachturnier extends \ContentElement
 				// Spieler sortieren nach gewünschter Wertungsreihenfolge
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Rangliste($spieler, unserialize($objTurnier->wertungen));
 
+				// Auf- und Absteiger markieren
+				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::AufAbsteiger($spieler, $objTurnier->aufsteiger, $objTurnier->absteiger);
+
 				// Ausgabedaten zusammenbauen
 				$daten = $spieler;
 				break;
@@ -105,6 +108,9 @@ class Schachturnier extends \ContentElement
 				                                      ->execute($this->schachturnier);
 				// Spieler sortieren nach gewünschter Wertungsreihenfolge
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Rangliste($spieler, unserialize($objTurnier->wertungen));
+
+				// Auf- und Absteiger markieren
+				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::AufAbsteiger($spieler, $objTurnier->aufsteiger, $objTurnier->absteiger);
 
 				// Ergebnisse als Kreuztabelle eintragen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Ergebnismatrix($spieler);

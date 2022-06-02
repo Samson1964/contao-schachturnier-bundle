@@ -16,6 +16,12 @@ $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['status_legend'] = 'Status';
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['ausgeschieden'] = array('Ausgeschieden', 'Der Spieler ist aus dem Turnier ausgeschieden und wird in Listen durchgestrichen dargestellt.');
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['freilos'] = array('Freilos', 'Spieler als Dummy-Eintrag (Freilos) führen. Der Nachname wird für die Anzeige übernommen, der Vorname ignoriert.');
 
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['qualifikationen_legend'] = 'Qualifikationen';
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['unaufsteigbar'] = array('Unaufsteigbar', 'Der Spieler darf nicht aufsteigen bzw. nicht Meister werden.');
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['unabsteigbar'] = array('Unabsteigbar', 'Der Spieler darf nicht absteigen.');
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['aufsteiger'] = array('Aufsteiger', 'Spieler als Aufsteiger markieren. In Ranglisten werden Aufsteiger grün markiert.');
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['absteiger'] = array('Absteiger', 'Spieler als Absteiger markieren. In Ranglisten werden Absteiger rot markiert.');
+
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['rating_legend'] = 'Wertungszahlen';
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['dwz'] = array('DWZ', 'Deutsche Wertungszahl');
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['elo'] = array('Elo', 'FIDE-Wertungszahl');
