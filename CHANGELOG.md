@@ -1,5 +1,12 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.3.0 (2022-12-05)
+
+* Add: tl_schachturnier_spieler.herkunft -> Markierung Meister, Pokalsieger, Neuling, Absteiger
+* Add: Ausgabe der Herkunft in Ergebnislisten
+* Add: tl_schachturnier_spieler.partienwertung -> Unterauswahl für die ausgeschieden-Spalte, um festzulegen, wie die Ergebnisse dargestellt werden sollen.
+* Add: Klasse Tabelle für die Darstellung von Tabellen
+
 ## Version 0.2.2 (2022-06-02)
 
 * Add: Auf- und Absteiger in einem Turnier markieren (in Turniereinstellungen und optional beim Spieler)

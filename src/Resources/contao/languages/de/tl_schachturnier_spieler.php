@@ -14,7 +14,9 @@ $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['nummer'] = array('Startnummer',
 
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['status_legend'] = 'Status';
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['ausgeschieden'] = array('Ausgeschieden', 'Der Spieler ist aus dem Turnier ausgeschieden und wird in Listen durchgestrichen dargestellt.');
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['partienwertung'] = array('Wertung der Partien', 'Wie sollen die gespielten und offenen Partien gewertet werden?');
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['freilos'] = array('Freilos', 'Spieler als Dummy-Eintrag (Freilos) führen. Der Nachname wird für die Anzeige übernommen, der Vorname ignoriert.');
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['herkunft'] = array('Herkunft', 'Was war der Spieler in der letzten Saison? Hinter dem Namen erscheint eine Kurzform in Klammern.');
 
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['qualifikationen_legend'] = 'Qualifikationen';
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['unaufsteigbar'] = array('Unaufsteigbar', 'Der Spieler darf nicht aufsteigen bzw. nicht Meister werden.');
@@ -58,4 +60,18 @@ $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['titel_options'] = array
 	'WIM' => 'Internationale Meisterin',
 	'WFM' => 'FIDE-Meisterin',
 	'WCM' => 'Kandidatenmeisterin',
+);
+
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['partienwertung_options'] = array
+(
+	'1'  => 'Alle Partien werden als kampflos verloren gewertet',
+	'2'  => 'Nur offene Partien werden als kampflos verloren gewertet',
+);
+
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['herkunft_options'] = array
+(
+	'M'  => 'Meister',
+	'P'  => 'Pokalsieger',
+	'N'  => 'Neuling (Aufsteiger)',
+	'A'  => 'Absteiger',
 );

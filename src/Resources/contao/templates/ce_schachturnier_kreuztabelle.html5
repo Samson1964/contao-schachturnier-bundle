@@ -35,12 +35,10 @@
 		<td><?= str_replace('.', ',', sprintf('%01.1f', $item['2punkte'])) ?>/<?= $item['spiele'] ?></td>
 		<td><?= str_replace('.', ',', sprintf('%01.2f', $item['sobe'])) ?></td>
 		<?php for($x = 1; $x <= $anzahl; $x++): ?>
-			<?php if($item['matrix'][$item['matrix_index']][$x] == '0'): ?>
-				<td class="ergebnis"><?= $item['matrix'][$item['matrix_index']][$x] ?></td> 
-			<?php elseif($item['matrix'][$item['matrix_index']][$x] == 'x'): ?>
-				<td class="ergebnis blindfeld"><?= $item['matrix'][$item['matrix_index']][$x] ?></td> 
+			<?php if($x == $item['platz']): ?>
+				<td class="ergebnis blindfeld">x</td> 
 			<?php else: ?>
-				<td class="ergebnis"><?= str_replace('0.5', '½', $item['matrix'][$item['matrix_index']][$x]) ?></td> 
+				<td class="ergebnis"><?= $item['partien'][$x] ?></td> 
 			<?php endif; ?>
 		<?php endfor; ?>
 	</tr>

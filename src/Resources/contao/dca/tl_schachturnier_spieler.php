@@ -100,14 +100,15 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'                => array('addImage'),
-		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},ausgeschieden,freilos;{qualifikationen_legend},unaufsteigbar,unabsteigbar,aufsteiger,absteiger;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
+		'__selector__'                => array('addImage', 'ausgeschieden'),
+		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},freilos,herkunft,ausgeschieden;{qualifikationen_legend},unaufsteigbar,unabsteigbar,aufsteiger,absteiger;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Unterpaletten
 	'subpalettes' => array
 	(
 		'addImage'                    => 'singleSRC',
+		'ausgeschieden'               => 'partienwertung',
 	),
 
 	// Fields
@@ -231,9 +232,26 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 				'doNotCopy'           => false,
 				'mandatory'           => false, 
 				'tl_class'            => 'w50 m12',
+				'submitOnChange'      => true,
 				'boolean'             => true
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
+		), 
+		'partienwertung' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['partienwertung'],
+			'exclude'                 => true,
+			'search'                  => false,
+			'sorting'                 => false,
+			'inputType'               => 'select',
+			'options'                 => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['partienwertung_options'],
+			'eval'                    => array
+			(
+				'mandatory'           => false,
+				'maxlength'           => 1,
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "varchar(1) NOT NULL default '1'"
 		), 
 		'freilos' => array
 		(
@@ -249,6 +267,22 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 				'boolean'             => true
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
+		), 
+		'herkunft' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['herkunft'],
+			'exclude'                 => true,
+			'search'                  => false,
+			'sorting'                 => false,
+			'inputType'               => 'checkboxWizard',
+			'options'                 => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['herkunft_options'],
+			'eval'                    => array
+			(
+				'mandatory'           => false,
+				'multiple'            => true,
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "blob NULL"
 		), 
 		'unaufsteigbar' => array
 		(

@@ -96,6 +96,8 @@ class Schachturnier extends \ContentElement
 				$this->strTemplate = 'ce_schachturnier_kreuztabelle';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
 
+				$tabelle = new \Schachbulle\ContaoSchachturnierBundle\Classes\Tabelle($this->schachturnier);
+
 				// Spieler initialisieren und Ergebnisse eintragen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::SpielerErgebnisse($this->schachturnier);
 				// Sonneborn-Berger-Wertung berechnen
@@ -122,6 +124,7 @@ class Schachturnier extends \ContentElement
 				
 				// Ausgabedaten zusammenbauen
 				$daten = $spieler;
+				$daten = $tabelle->getTabelle();
 				break;
 			case 'progress_nr': // Fortschrittstabelle (nach Nummern)
 				break;
