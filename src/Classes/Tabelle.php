@@ -688,9 +688,12 @@ class Tabelle
 			'spiele'  => SORT_ASC,
 		);
 
-		// Sortieren
-		$this->Tabelle = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($this->Tabelle, $reihenfolge);
-
+		// Sortieren, wenn Tabelle vorhanden
+		if($this->Tabelle)
+		{
+			$this->Tabelle = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($this->Tabelle, $reihenfolge);
+		}
+		
 		// Plazierung hinzufügen
 		$platz = 1;
 		foreach($this->Tabelle as $id => $arrSpieler)

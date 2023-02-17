@@ -1,5 +1,10 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.3.1 (2023-02-17)
+
+* Fix: Klasse Tabelle -> Übergabe an Helper::sortArrayByFields, nur wenn Array gefüllt ist
+* Fix: Inhaltselement Schachturnier -> Übergabe an Helper::Rangliste, nur wenn Array gefüllt ist
+
 ## Version 0.3.0 (2022-12-05)
 
 * Add: tl_schachturnier_spieler.herkunft -> Markierung Meister, Pokalsieger, Neuling, Absteiger

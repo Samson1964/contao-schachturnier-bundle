@@ -109,7 +109,10 @@ class Schachturnier extends \ContentElement
 				$objTurnier = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier WHERE id = ?')
 				                                      ->execute($this->schachturnier);
 				// Spieler sortieren nach gewünschter Wertungsreihenfolge
-				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Rangliste($spieler, unserialize($objTurnier->wertungen));
+				if($spieler)
+				{
+					$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Rangliste($spieler, unserialize($objTurnier->wertungen));
+				}
 
 				// Auf- und Absteiger markieren
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::AufAbsteiger($spieler, $objTurnier->aufsteiger, $objTurnier->absteiger);
