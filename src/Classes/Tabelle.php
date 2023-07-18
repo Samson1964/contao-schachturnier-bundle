@@ -19,7 +19,12 @@ class Tabelle
 		self::LoescheFreilos(); // Freilos in der Tabelle löschen
 		self::BerechneRangliste(); // Tabelle verkürzt anzeigen
 		self::GeneriereKreuztabelle(); // Kreuztabelle erstellen
-		self::AufAbsteigerMarkieren(2, 2);
+
+		// Turnier laden
+		$objTurnier = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier WHERE id=?')
+		                                     ->execute($id);
+
+		self::AufAbsteigerMarkieren($objTurnier->aufsteiger, $objTurnier->absteiger);
 		//echo "<pre>";
 		//print_r($this->Kreuztabelle);
 		//echo "</pre>";
@@ -367,7 +372,7 @@ class Tabelle
 
 						case '½:½':
 							// =======================================================
-							// Partie beim Weiß-Spieler addieren
+							// Partie beim ausgeschiedenen Weiß-Spieler addieren
 							// =======================================================
 							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
 							{
@@ -386,18 +391,33 @@ class Tabelle
 									$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
 									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
 								}
-							}
-							else
-							{
-								// Weiß-Spieler normal werten
-								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
-								$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
+								// =========================================================
+								// Partie beim nichtausgeschiedenen Schwarz-Spieler addieren
+								// =========================================================
+								if(!$this->Tabelle[$objResult->blackName]['ausgeschieden'])
+								{
+									// Weiß-Spieler ist ausgeschieden
+									if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
+									{
+										// Alle Partien als kampflos gewonnen werten
+										$this->Tabelle[$objResult->blackName]['spiele'] += 1;
+										$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
+										$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
+										$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '(½)', 'gegner' => $objResult->whiteName);
+									}
+									elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
+									{
+										// Wie gespielt werten
+										$this->Tabelle[$objResult->blackName]['spiele'] += 1;
+										$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
+										$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
+										$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
+									}
+								}
 							}
 
 							// =======================================================
-							// Partie beim Schwarz-Spieler addieren
+							// Partie beim ausgeschiedenen Schwarz-Spieler addieren
 							// =======================================================
 							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
 							{
@@ -416,9 +436,41 @@ class Tabelle
 									$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
 									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
 								}
+								// =========================================================
+								// Partie beim nichtausgeschiedenen Weiß-Spieler addieren
+								// =========================================================
+								if(!$this->Tabelle[$objResult->whiteName]['ausgeschieden'])
+								{
+									// Schwarz-Spieler ist ausgeschieden
+									if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
+									{
+										// Alle Partien als kampflos gewonnen werten
+										$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
+										$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
+										$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
+										$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '(½)', 'gegner' => $objResult->blackName);
+									}
+									elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
+									{
+										// Wie gespielt werten
+										$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
+										$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
+										$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
+										$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
+									}
+								}
 							}
-							else
+
+							// =========================================================
+							// Partie bei beiden nichtausgeschiedenen Spieler addieren
+							// =========================================================
+							if(!$this->Tabelle[$objResult->whiteName]['ausgeschieden'] && !$this->Tabelle[$objResult->blackName]['ausgeschieden'])
 							{
+								// Weiß-Spieler normal werten
+								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
+								$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
+								$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
+								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
 								// Schwarz-Spieler normal werten
 								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
 								$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
@@ -693,7 +745,7 @@ class Tabelle
 		{
 			$this->Tabelle = \Schachbulle\ContaoHelperBundle\Classes\Helper::sortArrayByFields($this->Tabelle, $reihenfolge);
 		}
-		
+
 		// Plazierung hinzufügen
 		$platz = 1;
 		foreach($this->Tabelle as $id => $arrSpieler)
@@ -801,7 +853,7 @@ class Tabelle
 			{
 				$this->Kreuztabelle[$id]['css'] .= 'aufsteiger ';
 			}
-        
+
 			// Aufsteigerplatz gefunden, falls innerhalb der Berechtigten und nicht unaufsteigbar
 			if($index <= $aufsteiger && !$this->Kreuztabelle[$id]['unaufsteigbar'])
 			{
@@ -815,9 +867,9 @@ class Tabelle
 			{
 				$index++;
 			}
-        
+
 		}
-		
+
 		// Absteiger markieren, Spieler-Array von hinten nach vorn durchlaufen
 		$index = 1;
 		foreach(array_reverse($this->Kreuztabelle, true) as $id => $arrSpieler)
@@ -827,7 +879,7 @@ class Tabelle
 			{
 				$this->Kreuztabelle[$id]['css'] .= 'absteiger ';
 			}
-        
+
 			// Aufsteigerplatz gefunden, falls innerhalb der Berechtigten und nicht unaufsteigbar
 			if($index <= $absteiger && !$this->Kreuztabelle[$id]['unabsteigbar'])
 			{
@@ -841,7 +893,7 @@ class Tabelle
 			{
 				$index++;
 			}
-        
+
 		}
 
 		//echo "<pre>";

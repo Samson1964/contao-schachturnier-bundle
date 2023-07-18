@@ -1,5 +1,10 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.3.2 (2023-07-18)
+
+* Fix: Kreuztabelle Ergebnisdarstellung, Gesamtpunktzahl
+* Fix: Auf- und Absteiger wurden nicht korrekt angezeigt -> Funktion war nicht eingebaut, sondern mit Standardwerten befüllt
+
 ## Version 0.3.1 (2023-02-17)
 
 * Fix: Klasse Tabelle -> Übergabe an Helper::sortArrayByFields, nur wenn Array gefüllt ist
