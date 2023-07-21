@@ -1,5 +1,9 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.3.3 (2023-07-21)
+
+* Change: default.css verbessert
+
 ## Version 0.3.2 (2023-07-18)
 
 * Fix: Kreuztabelle Ergebnisdarstellung, Gesamtpunktzahl
