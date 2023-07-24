@@ -43,7 +43,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'headerFields'            => array('title'),
 			'fields'                  => array('round ASC', 'board ASC'),
 			'panelLayout'             => 'filter;sort,search,limit',
-			'child_record_callback'   => array('tl_schachturnier_partien', 'listGames'),  
+			'child_record_callback'   => array('tl_schachturnier_partien', 'listGames'),
 		),
 		'global_operations' => array
 		(
@@ -132,6 +132,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['whiteName'],
 			'exclude'                 => true,
+			'filter'                  => true,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_schachturnier_partien', 'getPlayers'),
 			'eval'                    => array
@@ -148,6 +149,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['blackName'],
 			'exclude'                 => true,
+			'filter'                  => true,
 			'inputType'               => 'select',
 			'options_callback'        => array('tl_schachturnier_partien', 'getPlayers'),
 			'eval'                    => array
@@ -164,17 +166,18 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['round'],
 			'exclude'                 => true,
+			'filter'                  => true,
 			'search'                  => false,
 			'sorting'                 => false,
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'maxlength'           => 3,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "varchar(3) NOT NULL default ''"
-		), 
+		),
 		'board' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['board'],
@@ -184,12 +187,12 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'maxlength'           => 3,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "varchar(3) NOT NULL default ''"
-		), 
+		),
 		'datum' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['datum'],
@@ -199,7 +202,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'maxlength'           => 10,
 				'datepicker'          => true,
 				'tl_class'            => 'w50 wizard',
@@ -210,7 +213,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 				array('tl_schachturnier_partien', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
-		), 
+		),
 		'absagen' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['absagen'],
@@ -278,6 +281,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['result'],
 			'exclude'                 => true,
+			'filter'                  => true,
 			'search'                  => false,
 			'sorting'                 => false,
 			'inputType'               => 'select',
@@ -285,12 +289,12 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
-				'mandatory'           => false, 
+				'mandatory'           => false,
 				'maxlength'           => 10,
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "varchar(3) NOT NULL default ''"
-		), 
+		),
 		'info' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['info'],
@@ -299,12 +303,12 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'inputType'               => 'textarea',
 			'eval'                    => array
 			(
-				'tl_class'            => 'w50', 
+				'tl_class'            => 'w50',
 				'helpwizard'          => true
 			),
 			'explanation'             => 'insertTags',
 			'sql'                     => "mediumtext NULL"
-		), 
+		),
 		'pgn' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['pgn'],
@@ -329,7 +333,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 				'boolean'             => true,
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
-		), 
+		),
 	)
 );
 
@@ -347,7 +351,7 @@ class tl_schachturnier_partien extends Backend
 
 	var $nummer = 0;
 	var $player = array();
-	
+
 	/**
 	 * Import the back end user object
 	 */
@@ -372,38 +376,50 @@ class tl_schachturnier_partien extends Backend
 
 	public function listGames($arrRow)
 	{
+		static $runde; // Speichert die aktuelle Runde
+
 		$weiss = self::getPlayer($arrRow['whiteName']);
 		$schwarz = self::getPlayer($arrRow['blackName']);
 
 		$trenner = ' - ';
+		// Ergebnisfarbe grün/rot
 		if($arrRow['result'])
 		{
 			$css = 'color:green;';
 			$trenner = ' '.$arrRow['result'].' ';
-		}	
+		}
 		elseif(!$weiss || !$schwarz) $css = 'color:green;';
 		else $css = 'color:red;';
 
+		// Rundenfarbe
+		if($runde && ($arrRow['round'] != $runde))
+		{
+			$css .= 'padding-top:5px;border-top:1px solid black;';
+		}
+		
 		$temp = '<div class="tl_content_left" style="'.$css.'">';
 		$temp .= '<span style="display:inline-block; width:5%;">'.$arrRow['round'].'.'.$arrRow['board'].'</span>';
-		if($weiss && $schwarz) 
+		if($weiss && $schwarz)
 		{
 			$temp .= '<span style="display:inline-block; width:20%;">'.$weiss.'</span>';
 			$temp .= '<span style="display:inline-block; width:10%;">'.$trenner.'</span>';
 			$temp .= '<span style="display:inline-block; width:20%;">'.$schwarz.'</span>';
 		}
-		elseif($weiss) 
+		elseif($weiss)
 		{
 			$temp .= '<span style="display:inline-block; width:20%; font-weight:bold">Spielfrei:</span>';
 			$temp .= '<span style="display:inline-block; width:10%;"></span>';
 			$temp .= '<span style="display:inline-block; width:20%;">'.$weiss.'</span>';
 		}
-		elseif($schwarz) 
+		elseif($schwarz)
 		{
 			$temp .= '<span style="display:inline-block; width:20%; font-weight:bold">Spielfrei:</span>';
 			$temp .= '<span style="display:inline-block; width:10%;"></span>';
 			$temp .= '<span style="display:inline-block; width:20%;">'.$schwarz.'</span>';
 		}
+
+		$runde = $arrRow['round'];
+
 		return $temp.'</div>';
 	}
 
@@ -465,26 +481,26 @@ class tl_schachturnier_partien extends Backend
 	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
 	{
 		$this->import('BackendUser', 'User');
-		
+
 		if (strlen($this->Input->get('tid')))
 		{
 			$this->toggleVisibility($this->Input->get('tid'), ($this->Input->get('state') == 0));
 			$this->redirect($this->getReferer());
 		}
-		
+
 		// Check permissions AFTER checking the tid, so hacking attempts are logged
 		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_schachturnier_partien::published', 'alexf'))
 		{
 			return '';
 		}
-		
+
 		$href .= '&amp;id='.$this->Input->get('id').'&amp;tid='.$row['id'].'&amp;state='.$row[''];
-		
+
 		if (!$row['published'])
 		{
 			$icon = 'invisible.gif';
 		}
-		
+
 		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
 	}
 
@@ -501,9 +517,9 @@ class tl_schachturnier_partien extends Backend
 			$this->log('Not enough permissions to show/hide record ID "'.$intId.'"', 'tl_schachturnier_partien toggleVisibility', TL_ERROR);
 			$this->redirect('contao/main.php?act=error');
 		}
-		
+
 		$this->createInitialVersion('tl_schachturnier_partien', $intId);
-		
+
 		// Trigger the save_callback
 		if (is_array($GLOBALS['TL_DCA']['tl_schachturnier_partien']['fields']['published']['save_callback']))
 		{
@@ -513,7 +529,7 @@ class tl_schachturnier_partien extends Backend
 				$blnPublished = $this->$callback[0]->$callback[1]($blnPublished, $this);
 			}
 		}
-		
+
 		// Update the database
 		$this->Database->prepare("UPDATE tl_schachturnier_partien SET tstamp=". time() .", published='" . ($blnPublished ? '' : '1') . "' WHERE id=?")
 		     ->execute($intId);

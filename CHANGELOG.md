@@ -1,5 +1,12 @@
 # Schachturnier-Bundle Changelog
 
+## Version 0.3.4 (2023-07-24)
+
+* Change: tl_schachturnier_partien -> In der Auflistung werden die Runden durch eine Linie getrennt, der besseren Übersichtlichkeit wegen
+* Add: tl_schachturnier_partien -> Filter bei blackName und whiteName (leider nur mit den IDs der Spieler)
+* Add: tl_schachturnier_partien -> Filter für Ergebnis
+* Add: tl_schachturnier_partien -> Filter für Runde
+
 ## Version 0.3.3 (2023-07-21)
 
 * Change: default.css verbessert
