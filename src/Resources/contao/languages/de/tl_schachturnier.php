@@ -14,6 +14,8 @@ $GLOBALS['TL_LANG']['tl_schachturnier']['type'] = array('Art', 'Art des Turniers
 $GLOBALS['TL_LANG']['tl_schachturnier']['date_legend'] = 'Zeitraum';
 $GLOBALS['TL_LANG']['tl_schachturnier']['fromDate'] = array('Beginn', 'Beginndatum im Format TT.MM.JJJJ');
 $GLOBALS['TL_LANG']['tl_schachturnier']['toDate'] = array('Ende', 'Endedatum im Format TT.MM.JJJJ (kann leerbleiben bei einem eintägigen Turnier)');
+$GLOBALS['TL_LANG']['tl_schachturnier']['fromDateView'] = array('Beginndatum anzeigen', 'Beginndatum im Frontend unter Tabellen anzeigen.');
+$GLOBALS['TL_LANG']['tl_schachturnier']['toDateView'] = array('Endedatum anzeigen', 'Endedatum im Frontend unter Tabellen anzeigen.');
 
 $GLOBALS['TL_LANG']['tl_schachturnier']['wertungen_legend'] = 'Wertungsreihenfolge';
 $GLOBALS['TL_LANG']['tl_schachturnier']['wertungen'] = array('Wertungen aktivieren', 'Legen Sie hier die Wertungen und deren Reihenfolge fest.');

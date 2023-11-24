@@ -85,8 +85,16 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['toggle'],
-				'icon'                => 'visible.gif',
-				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
+				'attributes'           => 'onclick="Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'            => 'published',
+					'options'          => array
+					(
+						array('value' => '', 'icon' => 'invisible.svg'),
+						array('value' => '1', 'icon' => 'visible.svg'),
+					),
+				),
 			),
 			'show' => array
 			(
@@ -421,6 +429,11 @@ class tl_schachturnier_spieler extends Backend
 		if($arrRow['freilos']) $temp .= '<span style="color:red">'.$arrRow['lastname'].'</span>';
 		else $temp .= $arrRow['lastname'].', '.$arrRow['firstname'];
 		if($arrRow['ausgeschieden']) $temp .= '</s>';
+		$temp .= '</span>';
+		// Herkunft-Status
+		$temp .= '<span style="display:inline-block; width:50px;">';
+		$herkunft = unserialize($arrRow['herkunft']);
+		$temp .= is_array($herkunft) ? '<b>'.implode(',', $herkunft).'</b>' : '';
 		$temp .= '</span>';
 		// Qualifikations-Status
 		if($arrRow['unaufsteigbar']) $temp .= '<img src="bundles/contaoschachturnier/images/nicht_oben.png" title="Spieler kann/darf nicht aufsteigen">';

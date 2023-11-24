@@ -26,7 +26,21 @@ class Paarungsgenerator extends \Frontend
 			);
 		}
 
-		// Alte Paarungen l�schen
+		// Prüfen ob alle Startnummern vergeben wurden
+		$fehlend = array();
+		for($x = 1; $x <= count($player); $x++)
+		{
+			if(!isset($player[$x])) $fehlend[] = $x; // Nummer nicht vorhanden
+		}
+		if(count($fehlend))
+		{
+			\Message::addError('Paarungen nicht möglich. Startnummer '.implode(',', $fehlend).' fehlt.');
+			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
+			$request = str_replace('&key=pairs_generate', '', \Environment::get('request'));
+			$this->redirect($request);
+		}
+
+		// Alte Paarungen löschen
 		$objPlayer = \Database::getInstance()->prepare("DELETE FROM tl_schachturnier_partien WHERE pid=?")
 		                                     ->execute(\Input::get('id'));
 		
@@ -70,11 +84,7 @@ class Paarungsgenerator extends \Frontend
 		
 		// Cookie setzen und Ergebnisseite aufrufen
 		\System::setCookie('BE_PAGE_OFFSET', 0, 0);
-		$request = \Environment::get('request');
-		//// In Request Tabellenverweis austauschen
-		//$request = str_replace('&table=tl_schachtabelle', '&table=tl_chesstournament_results', $request);
-		// In Request generatePairs-Befehl entfernen
-		$request = str_replace('&key=pairs_generate', '', $request);
+		$request = str_replace('&key=pairs_generate', '', \Environment::get('request'));
 		$this->redirect($request);
 	}
 	

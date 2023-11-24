@@ -85,8 +85,16 @@ $GLOBALS['TL_DCA']['tl_schachturnier_termine'] = array
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier_termine']['toggle'],
-				'icon'                => 'visible.gif',
-				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
+				'attributes'           => 'onclick="Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'            => 'published',
+					'options'          => array
+					(
+						array('value' => '', 'icon' => 'invisible.svg'),
+						array('value' => '1', 'icon' => 'visible.svg'),
+					),
+				),
 			),
 			'show' => array
 			(
@@ -148,7 +156,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_termine'] = array
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_termine']['datum'],
 			'default'                 => date('d.m.Y'),
 			'exclude'                 => true,
-			'search'                  => true,
+			'search'                  => true,  
 			'flag'                    => 5,
 			'inputType'               => 'text',
 			'eval'                    => array

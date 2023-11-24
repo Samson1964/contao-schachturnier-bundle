@@ -196,8 +196,24 @@ class Schachturnier extends \ContentElement
 			default:
 		}
 
+		// Ausgabe Turnierdatum generieren
+		$turnierdatum = '';
+		if(isset($objTurnier))
+		{
+			if($objTurnier->fromDateView)
+			{
+				$turnierdatum .= $GLOBALS['TL_LANG']['tl_schachturnier']['turnierbeginntext'].date('d.m.Y', $objTurnier->fromDate);
+			}
+			if($objTurnier->toDateView)
+			{
+				if($turnierdatum) $turnierdatum .= $GLOBALS['TL_LANG']['tl_schachturnier']['turnierdatumtrenner'];
+				$turnierdatum .= $GLOBALS['TL_LANG']['tl_schachturnier']['turnierendetext'].date('d.m.Y', $objTurnier->toDate);
+			}
+		}
+
 		// Template ausgeben
 		$this->Template->class = "ce_schachturnier";
+		$this->Template->turnierdatum = $turnierdatum;
 		$this->Template->tabelle = $daten;
 		$this->Template->view_land = in_array('land', $view);
 		$this->Template->view_elo = in_array('elo', $view);

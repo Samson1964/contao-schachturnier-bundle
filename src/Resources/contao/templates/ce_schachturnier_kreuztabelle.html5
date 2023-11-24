@@ -46,4 +46,8 @@
 </tbody>
 </table>
 
+<?php if($this->turnierdatum): ?>
+	<div class="schachturnierdatum"><?= $this->turnierdatum ?></div>
+<?php endif; ?>
+
 <?php $this->endblock(); ?>

@@ -1,5 +1,14 @@
 # Schachturnier-Bundle Changelog
 
+## Version 1.0.0 (2023-11-24)
+
+* Add: Abhängigkeit codefog/contao-haste
+* Change: Toogle-Funktion Haste eingebaut in allen DCA
+* Add: Ausgabe des Feldes Herkunft (Meister, Pokalsieger usw.) in Backendliste Spieler
+* Add: Ausgeschiedene Spieler in Paarungsliste Backend markieren
+* Add: tl_schachturnier.fromDateView und tl_schachturnier.toDateView -> Turnierbeginn und Turnierende im Frontend unter Tabellen anzeigen
+* Add: Paarungsgenerator -> Prüfung ob alle Startnummern vergeben wurden, Ausgabe einer Fehlermeldung wenn eine fehlt (Fehler war: Wird der Paarungsgenerator mit einer unbelegten Spielernummer aufgerufen, stürzt er ab)
+
 ## Version 0.3.4 (2023-07-24)
 
 * Change: tl_schachturnier_partien -> In der Auflistung werden die Runden durch eine Linie getrennt, der besseren Übersichtlichkeit wegen

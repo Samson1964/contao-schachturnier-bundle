@@ -101,9 +101,16 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier']['toggle'],
-				'icon'                => 'visible.gif',
-				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_schachturnier', 'toggleIcon')
+				'attributes'           => 'onclick="Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'            => 'published',
+					'options'          => array
+					(
+						array('value' => '', 'icon' => 'invisible.svg'),
+						array('value' => '1', 'icon' => 'visible.svg'),
+					),
+				),
 			),
 			'show' => array
 			(
@@ -117,7 +124,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate;{wertungen_legend},wertungen;{aufabstieg_legend:hide},aufsteiger,absteiger;{publish_legend},published,complete'
+		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate,fromDateView,toDateView;{wertungen_legend},wertungen;{aufabstieg_legend:hide},aufsteiger,absteiger;{publish_legend},published,complete'
 	),
 
 	// Fields
@@ -209,6 +216,34 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				array('tl_schachturnier', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+		),  
+		'fromDateView' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['fromDateView'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'flag'                    => 1,
+			'default'                 => false,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50 m12',
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
+		),  
+		'toDateView' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['toDateView'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'flag'                    => 1,
+			'default'                 => false,
+			'inputType'               => 'checkbox',
+			'eval'                    => array
+			(
+				'tl_class'            => 'w50 m12',
+			),
+			'sql'                     => "char(1) NOT NULL default ''"
 		),  
 		'wertungen' => array
 		(
@@ -315,74 +350,6 @@ class tl_schachturnier extends Backend
 	public function loadDate($value)
 	{
 		return strtotime(date('Y-m-d', $value) . ' 00:00:00');
-	}
-
-	/**
-	 * Ändert das Aussehen des Toggle-Buttons.
-	 * @param $row
-	 * @param $href
-	 * @param $label
-	 * @param $title
-	 * @param $icon
-	 * @param $attributes
-	 * @return string
-	 */
-	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
-	{
-		$this->import('BackendUser', 'User');
-		
-		if (strlen($this->Input->get('tid')))
-		{
-			$this->toggleVisibility($this->Input->get('tid'), ($this->Input->get('state') == 0));
-			$this->redirect($this->getReferer());
-		}
-		
-		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_schachturnier::published', 'alexf'))
-		{
-			return '';
-		}
-		
-		$href .= '&amp;id='.$this->Input->get('id').'&amp;tid='.$row['id'].'&amp;state='.$row[''];
-		
-		if (!$row['published'])
-		{
-			$icon = 'invisible.gif';
-		}
-		
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
-	}
-
-	/**
-	 * Toggle the visibility of an element
-	 * @param integer
-	 * @param boolean
-	 */
-	public function toggleVisibility($intId, $blnPublished)
-	{
-		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_schachturnier::published', 'alexf'))
-		{
-			$this->log('Not enough permissions to show/hide record ID "'.$intId.'"', 'tl_schachturnier toggleVisibility', TL_ERROR);
-			$this->redirect('contao/main.php?act=error');
-		}
-		
-		$this->createInitialVersion('tl_schachturnier', $intId);
-		
-		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_schachturnier']['fields']['published']['save_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_schachturnier']['fields']['published']['save_callback'] as $callback)
-			{
-				$this->import($callback[0]);
-				$blnPublished = $this->$callback[0]->$callback[1]($blnPublished, $this);
-			}
-		}
-		
-		// Update the database
-		$this->Database->prepare("UPDATE tl_schachturnier SET tstamp=". time() .", published='" . ($blnPublished ? '' : '1') . "' WHERE id=?")
-		     ->execute($intId);
-		$this->createNewVersion('tl_schachturnier', $intId);
 	}
 
 }

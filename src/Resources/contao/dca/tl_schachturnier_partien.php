@@ -92,9 +92,16 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'toggle' => array
 			(
 				'label'               => &$GLOBALS['TL_LANG']['tl_schachturnier_partien']['toggle'],
-				'icon'                => 'visible.gif',
-				'attributes'          => 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'     => array('tl_schachturnier_partien', 'toggleIcon')
+				'attributes'           => 'onclick="Backend.getScrollOffset()"',
+				'haste_ajax_operation' => array
+				(
+					'field'            => 'published',
+					'options'          => array
+					(
+						array('value' => '', 'icon' => 'invisible.svg'),
+						array('value' => '1', 'icon' => 'visible.svg'),
+					),
+				),
 			),
 			'show' => array
 			(
@@ -426,16 +433,17 @@ class tl_schachturnier_partien extends Backend
 	public function getPlayers(DataContainer $dc)
 	{
 
-		$arrForms = array();
-		$objForms = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_spieler WHERE pid=? ORDER BY nummer ASC")
+		$arrPlayer = array();
+		$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_spieler WHERE pid=? ORDER BY nummer ASC")
 		                                    ->execute($dc->activeRecord->pid);
 
-		while($objForms->next())
+		while($objPlayer->next())
 		{
-			$arrForms[$objForms->id] = '('.$objForms->nummer.') '.$objForms->firstname .' '.$objForms->lastname;
+			$arrPlayer[$objPlayer->id] = '('.$objPlayer->nummer.') '.$objPlayer->firstname .' '.$objPlayer->lastname;
+			if($objPlayer->ausgeschieden) $arrPlayer[$objPlayer->id] = '<strike>'.$arrPlayer[$objPlayer->id].'</strike>';
 		}
 
-		return $arrForms;
+		return $arrPlayer;
 	}
 
 	public function getPlayer($id)
@@ -447,7 +455,11 @@ class tl_schachturnier_partien extends Backend
 		if($objPlayer->numRows)
 		{
 			if($objPlayer->freilos) $name = '';
-			else $name = '('.$objPlayer->nummer.') '.$objPlayer->firstname.' '.$objPlayer->lastname;
+			else 
+			{
+				$name = '('.$objPlayer->nummer.') '.$objPlayer->firstname.' '.$objPlayer->lastname;
+				if($objPlayer->ausgeschieden) $name = '<strike>'.$name.'</strike>';
+			}
 			return $name;
 		}
 		else return $id;
@@ -466,74 +478,6 @@ class tl_schachturnier_partien extends Backend
 			'-:-'  => '-:-'
 		);
 		return $arrForms;
-	}
-
-	/**
-	 * Ändert das Aussehen des Toggle-Buttons.
-	 * @param $row
-	 * @param $href
-	 * @param $label
-	 * @param $title
-	 * @param $icon
-	 * @param $attributes
-	 * @return string
-	 */
-	public function toggleIcon($row, $href, $label, $title, $icon, $attributes)
-	{
-		$this->import('BackendUser', 'User');
-
-		if (strlen($this->Input->get('tid')))
-		{
-			$this->toggleVisibility($this->Input->get('tid'), ($this->Input->get('state') == 0));
-			$this->redirect($this->getReferer());
-		}
-
-		// Check permissions AFTER checking the tid, so hacking attempts are logged
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_schachturnier_partien::published', 'alexf'))
-		{
-			return '';
-		}
-
-		$href .= '&amp;id='.$this->Input->get('id').'&amp;tid='.$row['id'].'&amp;state='.$row[''];
-
-		if (!$row['published'])
-		{
-			$icon = 'invisible.gif';
-		}
-
-		return '<a href="'.$this->addToUrl($href).'" title="'.specialchars($title).'"'.$attributes.'>'.$this->generateImage($icon, $label).'</a> ';
-	}
-
-	/**
-	 * Toggle the visibility of an element
-	 * @param integer
-	 * @param boolean
-	 */
-	public function toggleVisibility($intId, $blnPublished)
-	{
-		// Check permissions to publish
-		if (!$this->User->isAdmin && !$this->User->hasAccess('tl_schachturnier_partien::published', 'alexf'))
-		{
-			$this->log('Not enough permissions to show/hide record ID "'.$intId.'"', 'tl_schachturnier_partien toggleVisibility', TL_ERROR);
-			$this->redirect('contao/main.php?act=error');
-		}
-
-		$this->createInitialVersion('tl_schachturnier_partien', $intId);
-
-		// Trigger the save_callback
-		if (is_array($GLOBALS['TL_DCA']['tl_schachturnier_partien']['fields']['published']['save_callback']))
-		{
-			foreach ($GLOBALS['TL_DCA']['tl_schachturnier_partien']['fields']['published']['save_callback'] as $callback)
-			{
-				$this->import($callback[0]);
-				$blnPublished = $this->$callback[0]->$callback[1]($blnPublished, $this);
-			}
-		}
-
-		// Update the database
-		$this->Database->prepare("UPDATE tl_schachturnier_partien SET tstamp=". time() .", published='" . ($blnPublished ? '' : '1') . "' WHERE id=?")
-		     ->execute($intId);
-		$this->createNewVersion('tl_schachturnier_partien', $intId);
 	}
 
 }
