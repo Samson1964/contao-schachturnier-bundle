@@ -161,7 +161,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			'filter'                  => true,
 			'default'                 => '',
 			'inputType'               => 'select',
-			'options'                 => $GLOBALS['TL_LANG']['tl_schachturnier']['typen'], 
+			'options'                 => &$GLOBALS['TL_LANG']['tl_schachturnier']['typen'], 
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
@@ -174,7 +174,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 		'fromDate' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['fromDate'],
-			'default'                 => date('d.m.Y'),
+			'default'                 => time(),
 			'exclude'                 => true,
 			'search'                  => true,
 			'flag'                    => 6,
@@ -328,7 +328,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
  * @author     Leo Feyer <https://contao.org>
  * @package    News
  */
-class tl_schachturnier extends Backend
+class tl_schachturnier extends \Backend
 {
 
 	/**

@@ -154,7 +154,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_termine'] = array
 		'datum' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_termine']['datum'],
-			'default'                 => date('d.m.Y'),
+			'default'                 => time(),
 			'exclude'                 => true,
 			'search'                  => true,  
 			'flag'                    => 5,
@@ -251,7 +251,7 @@ class tl_schachturnier_termine extends Backend
 		else
 		{
 			echo $dc->activeRecord->pid;
-			// Keine Nummer vorhanden, nächste freie Nummer suchen
+			// Keine Nummer vorhanden, nÃ¤chste freie Nummer suchen
 			$objNummer = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_termine WHERE pid=?")
 			                                     ->execute($dc->activeRecord->pid);
 			$nummern = array();
@@ -277,7 +277,7 @@ class tl_schachturnier_termine extends Backend
 	}
 
 	/**
-	 * Datumswert für Datenbank umwandeln
+	 * Datumswert fÃ¼r Datenbank umwandeln
 	 * @param mixed
 	 * @return mixed
 	 */

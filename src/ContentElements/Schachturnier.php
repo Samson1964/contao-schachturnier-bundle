@@ -120,11 +120,6 @@ class Schachturnier extends \ContentElement
 				// Ergebnisse als Kreuztabelle eintragen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Ergebnismatrix($spieler);
 
-		//echo "<pre>";
-		//print_r($spieler);
-		//echo "</pre>";
-
-				
 				// Ausgabedaten zusammenbauen
 				$daten = $spieler;
 				$daten = $tabelle->getTabelle();
@@ -214,7 +209,7 @@ class Schachturnier extends \ContentElement
 		// Template ausgeben
 		$this->Template->class = "ce_schachturnier";
 		$this->Template->turnierdatum = $turnierdatum;
-		$this->Template->tabelle = $daten;
+		$this->Template->tabelle = isset($daten) ? $daten : '';
 		$this->Template->view_land = in_array('land', $view);
 		$this->Template->view_elo = in_array('elo', $view);
 		$this->Template->view_dwz = in_array('dwz', $view);

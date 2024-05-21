@@ -1,5 +1,18 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.0.1 (2024-05-21)
+
+* Fix: Warning: Undefined array key "pairs_generate_confirm" in dca/tl_schachturnier_partien.php (line 55) -> Sprachvariable verschoben nach default.php
+* Fix: An exception occurred while executing a query: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'fromDate' at row 1 -> fromDate Standardwert date('d.m.Y') durch time() ersetzt, weil ein Integer-Wert erwartet wird
+* Fix: Warning: Undefined array key "typen" in dca/tl_schachturnier.php (line 164) -> & davorgesetzt
+* Fix: An exception occurred while executing a query: SQLSTATE[01000]: Warning: 1265 Data truncated for column 'datum' at row 1 (beim Aufruf von Termin anlegen) -> datum Stnadradwert date('d.m.Y') auf time() geändert
+* Fix: Warning: Attempt to read property "pid" on null in dca/tl_schachturnier_partien.php (line 438) -> Wenn $dc->activerecord noch nicht vorhanden ist, wird jetzt auf die id von GET zurückgegriffen.
+* Fix: Non-static method Classes\Helper::SpielerErgebnisse() cannot be called statically -> alle Funktionen in Helper auf static gesetzt
+* Fix: Warning: Undefined array key 0 (beim Zugriff auf Kreuztabelle im BE) in Classes/Tabelle.php (line 64) -> Abfrage ob $herkunft vorhanden ist
+* Fix: Warning: Undefined array key 2 in templates/ce_schachturnier_kreuztabelle.html5 (line 41) -> Abfrage, ob Variable vorhanden ist
+* Fix: Warning: Undefined variable $daten in ContentElements/Schachturnier.php (line 217) 
+* Fix: Warning: Array to string conversion in templates/ce_schachturnier.html5 (line 9) 
+
 ## Version 2.0.0 (2024-05-21)
 
 * Add: PHP8-Unterstützung

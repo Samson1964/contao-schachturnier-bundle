@@ -11,7 +11,7 @@ class Helper
 	 * @param array: Spieler-Array
 	 * @retun array: Modifiziertes Spieler-Array
 	 */
-	public function SonnebornBergerWertung($spieler)
+	public static function SonnebornBergerWertung($spieler)
 	{
 		foreach($spieler as $id => $arrSpieler)
 		{
@@ -45,7 +45,7 @@ class Helper
 	 * @param array: Spieler-Array
 	 * @retun array: Modifiziertes Spieler-Array
 	 */
-	public function BuchholzWertung($spieler)
+	public static function BuchholzWertung($spieler)
 	{
 		foreach($spieler as $id => $arrSpieler)
 		{
@@ -67,7 +67,7 @@ class Helper
 	 * @param array: Spieler-Array
 	 * @retun array: Modifiziertes Spieler-Array
 	 */
-	public function Rangliste($spieler, $wertung)
+	public static function Rangliste($spieler, $wertung)
 	{
 		$reihenfolge = array();
 		if($wertung)
@@ -104,7 +104,7 @@ class Helper
 	 * @param array: Spieler-Array
 	 * @retun array: Modifiziertes Spieler-Array
 	 */
-	public function AufAbsteiger($spieler, $aufsteiger = 0, $absteiger = 0)
+	public static function AufAbsteiger($spieler, $aufsteiger = 0, $absteiger = 0)
 	{
 
 		// Aufsteiger markieren, Spieler-Array von vorn nach hinten durchlaufen
@@ -173,7 +173,7 @@ class Helper
 	 * @param array: Spieler-Array
 	 * @retun array: Modifiziertes Spieler-Array
 	 */
-	public function SpielerErgebnisse($turnierId)
+	public static function SpielerErgebnisse($turnierId)
 	{
 		// Spieler laden
 		$objSpieler = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? ORDER BY nummer ASC')
@@ -304,7 +304,7 @@ class Helper
 	 * @param array: Spieler-Array
 	 * @retun array: Modifiziertes Spieler-Array
 	 */
-	public function Ergebnismatrix($spieler)
+	public static function Ergebnismatrix($spieler)
 	{
 		// Anzahl der Spieler
 		$anzahlSpieler = count($spieler);

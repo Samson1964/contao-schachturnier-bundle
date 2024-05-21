@@ -17,3 +17,9 @@ $GLOBALS['TL_LANG']['CTE']['schachturnier'] = array('Schachturnier', 'Daten eine
 $GLOBALS['TL_LANG']['tl_schachturnier']['turnierbeginntext'] = 'Turnierbeginn: ';
 $GLOBALS['TL_LANG']['tl_schachturnier']['turnierdatumtrenner'] = ' | ';
 $GLOBALS['TL_LANG']['tl_schachturnier']['turnierendetext'] = 'Turnierende: ';
+
+/**
+ * Buttons für globale Operationen
+ */
+
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['pairs_generate_confirm'] = 'Paarungen wirklich generieren? Die alten Paarungen werden gelöscht!';

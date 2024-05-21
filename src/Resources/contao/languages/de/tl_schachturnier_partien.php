@@ -2,11 +2,25 @@
 
 /**
  * Contao Open Source CMS
- * Copyright (C) 2005-2014 Leo Feyer
+ * Copyright (C) 2005-2024 Leo Feyer
  *
  */
 
-// Eingabemaske
+/**
+ * Buttons für Operationen
+ */
+
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['new'] = array('Neue Paarung', 'Neue Paarung anlegen');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['edit'] = array('Paarung bearbeiten', 'Paarung %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['copy'] = array('Paarung kopieren', 'Paarung %s kopieren');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['delete'] = array('Paarung löschen', 'Paarung %s löschen');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['toggle'] = array('Paarung aktivieren/deaktivieren', 'Paarung %s aktivieren/deaktivieren');
+$GLOBALS['TL_LANG']['tl_schachturnier_partien']['show'] = array('Paarungsdetails anzeigen', 'Details der Paarung %s anzeigen');
+
+/**
+ * Felder
+ */
+
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['player_legend'] = 'Paarung';
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['whiteName'] = array('Weiß', 'Name des Weiß-Spielers');
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['blackName'] = array('Schwarz', 'Name des Schwarz-Spielers');
@@ -32,18 +46,7 @@ $GLOBALS['TL_LANG']['tl_schachturnier_partien']['publish_legend'] = 'Veröffentl
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['published'] = array('Veröffentlicht', 'Paarung veröffentlicht');
 
 /**
- * Buttons für Operationen
- */
-$GLOBALS['TL_LANG']['tl_schachturnier_partien']['new'] = array('Neue Paarung', 'Neue Paarung anlegen');
-$GLOBALS['TL_LANG']['tl_schachturnier_partien']['edit'] = array('Paarung bearbeiten', 'Paarung %s bearbeiten');
-$GLOBALS['TL_LANG']['tl_schachturnier_partien']['copy'] = array('Paarung kopieren', 'Paarung %s kopieren');
-$GLOBALS['TL_LANG']['tl_schachturnier_partien']['delete'] = array('Paarung löschen', 'Paarung %s löschen');
-$GLOBALS['TL_LANG']['tl_schachturnier_partien']['toggle'] = array('Paarung aktivieren/deaktivieren', 'Paarung %s aktivieren/deaktivieren');
-$GLOBALS['TL_LANG']['tl_schachturnier_partien']['show'] = array('Paarungsdetails anzeigen', 'Details der Paarung %s anzeigen');
-
-/**
  * Buttons für globale Operationen
  */
 
 $GLOBALS['TL_LANG']['tl_schachturnier_partien']['pairs_generate'] = array('Paarungsgenerator', 'Paarungen generieren');
-$GLOBALS['TL_LANG']['tl_schachturnier_partien']['pairs_generate_confirm'] = 'Paarungen wirklich generieren? Die alten Paarungen werden gelöscht!';

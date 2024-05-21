@@ -55,13 +55,13 @@ class Tabelle
 			{
 				// herkunft laden
 				$herkunft = (array)unserialize($objResult->herkunft);
-				if($herkunft[0] == '') $herkunft = array();
+				print_r($herkunft);
 
 				// Name modifizieren
 				// Titel, Vorname und Nachname zusammenfügen
 				$name = $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname;
 				// Herkunft hinzufügen
-				$name = $herkunft[0] != '' ? $name.' ('.implode($herkunft, ',').')' : $name;
+				if($herkunft) $name = $herkunft[0] != '' ? $name.' ('.implode($herkunft, ',').')' : $name;
 				// Ausgeschieden-Markierung
 				$name = $objResult->ausgeschieden ? '<s>'.$name.'</s>' : $name;
 

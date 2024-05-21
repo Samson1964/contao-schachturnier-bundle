@@ -430,12 +430,21 @@ class tl_schachturnier_partien extends Backend
 		return $temp.'</div>';
 	}
 
-	public function getPlayers(DataContainer $dc)
+	public function getPlayers(\DataContainer $dc)
 	{
+		if(isset($dc->activeRecord))
+		{
+			// Aktiver Datensatz wurde übergeben
+			$pid = $dc->activeRecord->pid;
+		}
+		else
+		{
+			$pid = \Input::get('id');
+		}
 
 		$arrPlayer = array();
 		$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_spieler WHERE pid=? ORDER BY nummer ASC")
-		                                    ->execute($dc->activeRecord->pid);
+		                                     ->execute($pid);
 
 		while($objPlayer->next())
 		{
