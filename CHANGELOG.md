@@ -1,5 +1,9 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.0.0 (2024-05-21)
+
+* Add: PHP8-Unterstützung
+
 ## Version 1.0.0 (2023-11-24)
 
 * Add: Abhängigkeit codefog/contao-haste
