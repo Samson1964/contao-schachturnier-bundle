@@ -55,13 +55,12 @@ class Tabelle
 			{
 				// herkunft laden
 				$herkunft = (array)unserialize($objResult->herkunft);
-				print_r($herkunft);
 
 				// Name modifizieren
 				// Titel, Vorname und Nachname zusammenfügen
 				$name = $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname;
 				// Herkunft hinzufügen
-				if($herkunft) $name = $herkunft[0] != '' ? $name.' ('.implode($herkunft, ',').')' : $name;
+				if(count($herkunft) > 0 && $herkunft[0] != '') $name = $name.' ('.implode(',', $herkunft).')';
 				// Ausgeschieden-Markierung
 				$name = $objResult->ausgeschieden ? '<s>'.$name.'</s>' : $name;
 
@@ -809,7 +808,7 @@ class Tabelle
 				'absteiger'      => $this->Tabelle[$id]['absteiger'],
 				'unaufsteigbar'  => $this->Tabelle[$id]['unaufsteigbar'],
 				'unabsteigbar'   => $this->Tabelle[$id]['unabsteigbar'],
-				'partien'        => array()
+				'partien'        => array_fill(1, 100, '') // statt array(), was das Array nur unvollständig vorfüllte. Jetzt werden 100 Einträge vorgegeben.
 			);
 
 			//print_r($this->Tabelle);

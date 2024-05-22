@@ -29,7 +29,7 @@ class Schachturnier extends \ContentElement
 	{
 
 		// Optionen laden
-		$view = unserialize($this->schachturnier_options);
+		$view = (array)unserialize($this->schachturnier_options);
 		
 		switch($this->schachturnier_mode)
 		{
@@ -123,6 +123,7 @@ class Schachturnier extends \ContentElement
 				// Ausgabedaten zusammenbauen
 				$daten = $spieler;
 				$daten = $tabelle->getTabelle();
+
 				break;
 			case 'progress_nr': // Fortschrittstabelle (nach Nummern)
 				break;
@@ -209,7 +210,7 @@ class Schachturnier extends \ContentElement
 		// Template ausgeben
 		$this->Template->class = "ce_schachturnier";
 		$this->Template->turnierdatum = $turnierdatum;
-		$this->Template->tabelle = isset($daten) ? $daten : '';
+		$this->Template->tabelle = $daten;
 		$this->Template->view_land = in_array('land', $view);
 		$this->Template->view_elo = in_array('elo', $view);
 		$this->Template->view_dwz = in_array('dwz', $view);

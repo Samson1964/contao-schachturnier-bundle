@@ -38,7 +38,7 @@
 			<?php if($x == $item['platz']): ?>
 				<td class="ergebnis blindfeld">x</td> 
 			<?php else: ?>
-				<td class="ergebnis"><?php if(isset($item['partien'][$x])) $item['partien'][$x]; ?></td> 
+				<td class="ergebnis"><?= $item['partien'][$x] ?></td> 
 			<?php endif; ?>
 		<?php endfor; ?>
 	</tr>

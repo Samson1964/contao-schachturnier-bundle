@@ -1,5 +1,10 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.0.2 (2024-05-22)
+
+* Fix: Klassen Schachturnier und Tabelle -> Fehler bei implode und Array-Prüfung
+* Fix: Kreuztabelle (Rang) ist leer -> $partien-Array hat nur einige Indizes. Beim Zugriff auf einen nicht vorhandenen Index kommt ein Fehler. In Klasse Tabelle 'partien' statt mit array() mit array_fill(1, 100, '') vollständig gefüllt.
+
 ## Version 2.0.1 (2024-05-21)
 
 * Fix: Warning: Undefined array key "pairs_generate_confirm" in dca/tl_schachturnier_partien.php (line 55) -> Sprachvariable verschoben nach default.php
