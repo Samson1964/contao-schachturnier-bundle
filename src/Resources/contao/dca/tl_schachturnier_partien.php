@@ -432,7 +432,7 @@ class tl_schachturnier_partien extends Backend
 
 	public function getPlayers(\DataContainer $dc)
 	{
-		if(isset($dc->activeRecord))
+		if($dc->activeRecord)
 		{
 			// Aktiver Datensatz wurde übergeben
 			$pid = $dc->activeRecord->pid;

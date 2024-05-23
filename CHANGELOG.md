@@ -1,5 +1,9 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.0.3 (2024-05-23)
+
+* Fix: Beim Bearbeiten der Paarungen erscheinen bei Weiß/Schwarz nur die Spieler-IDs -> in tl_schachturnier_partien.getPlayers if(isset($dc->activeRecord)) ausgetauscht gegen if($dc->activeRecord)
+
 ## Version 2.0.2 (2024-05-22)
 
 * Fix: Klassen Schachturnier und Tabelle -> Fehler bei implode und Array-Prüfung
