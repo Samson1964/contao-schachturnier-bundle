@@ -50,6 +50,7 @@ $GLOBALS['TL_LANG']['tl_schachturnier']['editPartien'] = array('Paarungen bearbe
 $GLOBALS['TL_LANG']['tl_schachturnier']['typen'] = array
 (
 	'rd' => 'Rundenturnier',
+	'dr' => 'Doppelrundenturnier',
 	'ko' => 'K.o.-Turnier / Schweizer System',
 );
 

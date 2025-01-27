@@ -1,5 +1,11 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.1.0 (2025-01-27)
+
+* Add: Paarungsgenerator mit Fehlermeldung, wenn Turniertyp nicht erlaubt
+* Add: Paarungsgenerator kann jetzt auch Doppelrundenturnier
+* Change: tl_schachturnier_partien -> Sortierung "-round DESC" statt "round ASC", um numerisch aufsteigend zu sortieren
+
 ## Version 2.0.3 (2024-05-23)
 
 * Fix: Beim Bearbeiten der Paarungen erscheinen bei Weiß/Schwarz nur die Spieler-IDs -> in tl_schachturnier_partien.getPlayers if(isset($dc->activeRecord)) ausgetauscht gegen if($dc->activeRecord)

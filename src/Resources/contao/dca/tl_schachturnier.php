@@ -148,7 +148,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			'inputType'               => 'text',
 			'eval'                    => array
 			(
-				'mandatory'           => true, 
+				'mandatory'           => true,
 				'maxlength'           => 255,
 				'tl_class'            => 'w50'
 			),
@@ -161,7 +161,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			'filter'                  => true,
 			'default'                 => '',
 			'inputType'               => 'select',
-			'options'                 => &$GLOBALS['TL_LANG']['tl_schachturnier']['typen'], 
+			'options'                 => &$GLOBALS['TL_LANG']['tl_schachturnier']['typen'],
 			'eval'                    => array
 			(
 				'includeBlankOption'  => true,
@@ -170,7 +170,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'w50',
 			),
 			'sql'                     => "char(2) NOT NULL default ''"
-		),  
+		),
 		'fromDate' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['fromDate'],
@@ -193,7 +193,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				array('tl_schachturnier', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
-		), 
+		),
 		'toDate' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['toDate'],
@@ -216,7 +216,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				array('tl_schachturnier', 'loadDate')
 			),
 			'sql'                     => "int(10) unsigned NOT NULL default '0'"
-		),  
+		),
 		'fromDateView' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['fromDateView'],
@@ -230,7 +230,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'w50 m12',
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
-		),  
+		),
 		'toDateView' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['toDateView'],
@@ -244,7 +244,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'w50 m12',
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
-		),  
+		),
 		'wertungen' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['wertungen'],
@@ -257,7 +257,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'long',
 			),
 			'sql'                     => "blob NULL"
-		),  
+		),
 		'aufsteiger' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['aufsteiger'],
@@ -272,7 +272,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "int(3) unsigned NOT NULL default '0'"
-		),  
+		),
 		'absteiger' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['absteiger'],
@@ -287,7 +287,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'w50'
 			),
 			'sql'                     => "int(3) unsigned NOT NULL default '0'"
-		),  
+		),
 		'complete' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['complete'],
@@ -301,7 +301,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'w50 m12',
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
-		),  
+		),
 		'published' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['published'],
@@ -315,7 +315,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 				'tl_class'            => 'w50 m12',
 			),
 			'sql'                     => "char(1) NOT NULL default ''"
-		),  
+		),
 	)
 );
 

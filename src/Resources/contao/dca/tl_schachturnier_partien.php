@@ -41,7 +41,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_partien'] = array
 			'mode'                    => 4,
 			'disableGrouping'         => true,
 			'headerFields'            => array('title'),
-			'fields'                  => array('round ASC', 'board ASC'),
+			'fields'                  => array('-round DESC', 'board ASC'),
 			'panelLayout'             => 'filter;sort,search,limit',
 			'child_record_callback'   => array('tl_schachturnier_partien', 'listGames'),
 		),

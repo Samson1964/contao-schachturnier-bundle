@@ -12,10 +12,23 @@ class Paarungsgenerator extends \Frontend
 	{
 
 		$zeit = time();
+		// Turnierdaten laden
+		$objTurnier = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier WHERE id=?")
+		                                      ->execute(\Input::get('id'));
 		// Spielerliste des Turniers einlesen
 		$objPlayer = \Database::getInstance()->prepare("SELECT * FROM tl_schachturnier_spieler WHERE pid=? ORDER BY nummer")
 		                                     ->execute(\Input::get('id'));
 
+		if($objTurnier->type == '' || $objTurnier->type == 'ko')
+		{
+			// Turniertyp leer oder K.o./Schweizer System -> dann beenden mit Fehlermeldung
+			\Message::addError('Automatische Paarungen bei Turniertyp <b>'.$objTurnier->type.'</b> nicht erlaubt!');
+			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
+			$request = str_replace('&key=pairs_generate', '', \Environment::get('request'));
+			$this->redirect($request);
+			return false;
+		}
+		
 		$player = array();
 		while($objPlayer->next())
 		{
@@ -38,6 +51,7 @@ class Paarungsgenerator extends \Frontend
 			\System::setCookie('BE_PAGE_OFFSET', 0, 0);
 			$request = str_replace('&key=pairs_generate', '', \Environment::get('request'));
 			$this->redirect($request);
+			return false;
 		}
 
 		// Alte Paarungen löschen
@@ -56,10 +70,6 @@ class Paarungsgenerator extends \Frontend
 		for($runde = 1; $runde <= $maxround; $runde++)
 		{
 			$paarung = $this->Standardsystem(count($player), $runde);
-			// Paarungen schreiben
-			//echo "<pre>";
-			//print_r($paarung);
-			//echo "</pre>";
 			$brett = 0;
 			foreach($paarung as $item)
 			{
@@ -80,9 +90,38 @@ class Paarungsgenerator extends \Frontend
 			}
 		}
 		
+		if($objTurnier->type == 'dr')
+		{
+			// Doppelrundenturnier, deshalb Paarungen mit neuen Rundennummern wiederholen
+			// Paarungen generieren und mit verkehrten Farben speichern
+			for($runde = 1; $runde <= $maxround; $runde++)
+			{
+				$paarung = $this->Standardsystem(count($player), $runde);
+				$brett = 0;
+				foreach($paarung as $item)
+				{
+					$brett++;
+					$set = array
+					(
+						'pid'       => \Input::get('id'),
+						'tstamp'    => $zeit,
+						'whiteName' => $player[$item['s']]['id'],
+						'blackName' => $player[$item['w']]['id'],
+						'round'     => $runde+$maxround,
+						'board'     => $brett,
+						'published' => 1
+					);
+					$objInsert = \Database::getInstance()->prepare("INSERT INTO tl_schachturnier_partien %s")
+					                                     ->set($set)
+					                                     ->execute();
+				}
+			}
+		}
+		
 		//return "Fertig!";
 		
 		// Cookie setzen und Ergebnisseite aufrufen
+		\Message::addConfirmation('Die Paarungen wurden neu erstellt.');
 		\System::setCookie('BE_PAGE_OFFSET', 0, 0);
 		$request = str_replace('&key=pairs_generate', '', \Environment::get('request'));
 		$this->redirect($request);
