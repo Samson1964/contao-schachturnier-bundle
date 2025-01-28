@@ -1,5 +1,11 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.1.1 (2025-01-28)
+
+* Fix: Warning: Undefined array key 1 in Resources/contao/templates/ce_schachturnier_paarungen.html5 (line 13) 
+* Add: Darstellung der Kreuztabelle mit mehreren Ergebnissen (für Doppelrundenturniere)
+* Add: Backend-CSS, um die Trennung mittels schwarzem Rahmen in der Partienliste besser zu ermöglichen
+
 ## Version 2.1.0 (2025-01-27)
 
 * Add: Paarungsgenerator mit Fehlermeldung, wenn Turniertyp nicht erlaubt

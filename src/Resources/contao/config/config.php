@@ -11,6 +11,14 @@
  * @copyright Frank Hoppe 2014
  */
 
+// Standard-CSS einbinden
+
+if(TL_MODE == 'BE') 
+{
+	$GLOBALS['TL_CSS'][] = 'bundles/contaoschachturnier/css/be.css';
+}
+
+
 $GLOBALS['BE_MOD']['content']['schachturnier'] = array
 (
 	'tables'         => array('tl_schachturnier', 'tl_schachturnier_spieler', 'tl_schachturnier_partien', 'tl_schachturnier_termine'),
@@ -24,4 +32,3 @@ $GLOBALS['BE_MOD']['content']['schachturnier'] = array
  * -------------------------------------------------------------------------
  */
 $GLOBALS['TL_CTE']['schach']['schachturnier'] = 'Schachbulle\ContaoSchachturnierBundle\ContentElements\Schachturnier';
-

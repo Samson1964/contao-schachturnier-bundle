@@ -8,6 +8,7 @@ class Tabelle
 	var $Tabelle = array();
 	var $Kreuztabelle = array();
 	var $TurnierID;
+	var $turniermodus;
 
 	public function __construct($id)
 	{
@@ -18,12 +19,16 @@ class Tabelle
 		self::SonnebornBerger(); // Sonneborn-Berger-Wertung berechnen
 		self::LoescheFreilos(); // Freilos in der Tabelle löschen
 		self::BerechneRangliste(); // Tabelle verkürzt anzeigen
+		//echo '<pre>';
+		//print_r($this->Tabelle);
+		//echo '</pre>';
 		self::GeneriereKreuztabelle(); // Kreuztabelle erstellen
 
 		// Turnier laden
 		$objTurnier = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier WHERE id=?')
 		                                     ->execute($id);
 
+		$this->Turniermodus = $objTurnier->type; // Turniermodus speichern
 		self::AufAbsteigerMarkieren($objTurnier->aufsteiger, $objTurnier->absteiger);
 		//echo "<pre>";
 		//print_r($this->Kreuztabelle);
@@ -140,7 +145,7 @@ class Tabelle
 								{
 									// Kampflos verloren werten, also keine Punkte addieren
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(1)', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(1)', 'gegner' => $objResult->blackName);
 								}
 								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 								{
@@ -149,7 +154,7 @@ class Tabelle
 									$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
 									$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
 									$this->Tabelle[$objResult->whiteName]['siege'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName);
 								}
 							}
 							else
@@ -159,7 +164,7 @@ class Tabelle
 								$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
 								$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
 								$this->Tabelle[$objResult->whiteName]['siege'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName);
+								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName);
 							}
 
 							// =======================================================
@@ -172,20 +177,20 @@ class Tabelle
 								{
 									// Kampflos verloren werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(0)', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(0)', 'gegner' => $objResult->whiteName);
 								}
 								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 								{
 									// Wie gespielt werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName);
 								}
 							}
 							else
 							{
 								// Schwarz-Spieler normal werten
 								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName);
+								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName);
 							}
 							break;
 
@@ -200,7 +205,7 @@ class Tabelle
 								{
 									// Kampflos verloren werten, also keine Punkte addieren
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(+)', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(+)', 'gegner' => $objResult->blackName);
 								}
 								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 								{
@@ -209,7 +214,7 @@ class Tabelle
 									$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
 									$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
 									$this->Tabelle[$objResult->whiteName]['siege'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
 								}
 							}
 							else
@@ -219,7 +224,7 @@ class Tabelle
 								$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
 								$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
 								$this->Tabelle[$objResult->whiteName]['siege'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
+								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
 							}
 
 							// =======================================================
@@ -232,20 +237,20 @@ class Tabelle
 								{
 									// Kampflos verloren werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->whiteName);
 								}
 								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 								{
 									// Wie gespielt werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
 								}
 							}
 							else
 							{
 								// Schwarz-Spieler normal werten
 								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
+								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
 							}
 							break;
 
@@ -260,20 +265,20 @@ class Tabelle
 								{
 									// Kampflos verloren werten, also keine Punkte addieren
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(0)', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(0)', 'gegner' => $objResult->blackName);
 								}
 								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 								{
 									// Wie gespielt werten
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName);
 								}
 							}
 							else
 							{
 								// Weiß-Spieler normal werten
 								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName);
+								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName);
 							}
 
 							// =======================================================
@@ -286,7 +291,7 @@ class Tabelle
 								{
 									// Kampflos verloren werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(1)', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(1)', 'gegner' => $objResult->whiteName);
 								}
 								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 								{
@@ -295,7 +300,7 @@ class Tabelle
 									$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
 									$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
 									$this->Tabelle[$objResult->blackName]['siege'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName);
 								}
 							}
 							else
@@ -305,7 +310,7 @@ class Tabelle
 								$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
 								$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
 								$this->Tabelle[$objResult->blackName]['siege'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName);
+								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName);
 							}
 							break;
 
@@ -320,20 +325,20 @@ class Tabelle
 								{
 									// Kampflos verloren werten, also keine Punkte addieren
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->blackName);
 								}
 								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 								{
 									// Wie gespielt werten
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
 								}
 							}
 							else
 							{
 								// Weiß-Spieler normal werten
 								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
+								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
 							}
 
 							// =======================================================
@@ -346,7 +351,7 @@ class Tabelle
 								{
 									// Kampflos verloren werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(+)', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(+)', 'gegner' => $objResult->whiteName);
 								}
 								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 								{
@@ -355,7 +360,7 @@ class Tabelle
 									$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
 									$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
 									$this->Tabelle[$objResult->blackName]['siege'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
 								}
 							}
 							else
@@ -365,7 +370,7 @@ class Tabelle
 								$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
 								$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
 								$this->Tabelle[$objResult->blackName]['siege'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
+								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
 							}
 							break;
 
@@ -380,7 +385,7 @@ class Tabelle
 								{
 									// Kampflos verloren werten, also keine Punkte addieren
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(½)', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(½)', 'gegner' => $objResult->blackName);
 								}
 								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 								{
@@ -388,7 +393,7 @@ class Tabelle
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
 									$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
 									$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
 								}
 								// =========================================================
 								// Partie beim nichtausgeschiedenen Schwarz-Spieler addieren
@@ -402,7 +407,7 @@ class Tabelle
 										$this->Tabelle[$objResult->blackName]['spiele'] += 1;
 										$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
 										$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
-										$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '(½)', 'gegner' => $objResult->whiteName);
+										$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '(½)', 'gegner' => $objResult->whiteName);
 									}
 									elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 									{
@@ -410,7 +415,7 @@ class Tabelle
 										$this->Tabelle[$objResult->blackName]['spiele'] += 1;
 										$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
 										$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-										$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
+										$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
 									}
 								}
 							}
@@ -425,7 +430,7 @@ class Tabelle
 								{
 									// Kampflos verloren werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(½)', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(½)', 'gegner' => $objResult->whiteName);
 								}
 								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 								{
@@ -433,7 +438,7 @@ class Tabelle
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
 									$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
 									$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
 								}
 								// =========================================================
 								// Partie beim nichtausgeschiedenen Weiß-Spieler addieren
@@ -447,7 +452,7 @@ class Tabelle
 										$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
 										$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
 										$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
-										$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '(½)', 'gegner' => $objResult->blackName);
+										$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '(½)', 'gegner' => $objResult->blackName);
 									}
 									elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 									{
@@ -455,7 +460,7 @@ class Tabelle
 										$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
 										$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
 										$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-										$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
+										$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
 									}
 								}
 							}
@@ -469,12 +474,12 @@ class Tabelle
 								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
 								$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
 								$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
+								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
 								// Schwarz-Spieler normal werten
 								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
 								$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
 								$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
+								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
 							}
 							break;
 
@@ -489,7 +494,7 @@ class Tabelle
 								{
 									// Kampflos verloren werten, also keine Punkte addieren
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(=)', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(=)', 'gegner' => $objResult->blackName);
 								}
 								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 								{
@@ -497,7 +502,7 @@ class Tabelle
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
 									$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
 									$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->blackName);
 								}
 							}
 							else
@@ -506,7 +511,7 @@ class Tabelle
 								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
 								$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
 								$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->blackName);
+								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->blackName);
 							}
 
 							// =======================================================
@@ -519,7 +524,7 @@ class Tabelle
 								{
 									// Kampflos verloren werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(=)', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(=)', 'gegner' => $objResult->whiteName);
 								}
 								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 								{
@@ -527,7 +532,7 @@ class Tabelle
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
 									$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
 									$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->whiteName);
 								}
 							}
 							else
@@ -536,7 +541,7 @@ class Tabelle
 								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
 								$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
 								$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->whiteName);
+								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->whiteName);
 							}
 							break;
 
@@ -551,20 +556,20 @@ class Tabelle
 								{
 									// Kampflos verloren werten, also keine Punkte addieren
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->blackName);
 								}
 								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 								{
 									// Wie gespielt werten
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
 								}
 							}
 							else
 							{
 								// Weiß-Spieler normal werten
 								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
+								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
 							}
 
 							// =======================================================
@@ -577,20 +582,20 @@ class Tabelle
 								{
 									// Kampflos verloren werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->whiteName);
 								}
 								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 								{
 									// Wie gespielt werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
 								}
 							}
 							else
 							{
 								// Schwarz-Spieler normal werten
 								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
+								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
 							}
 							break;
 
@@ -605,18 +610,18 @@ class Tabelle
 								{
 									// Kampflos verloren werten, also keine Punkte addieren
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
 									// Beim Gegner als kampflos gewonnen werten
 									$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
 									$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
 								}
 								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
 								{
 									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
 								}
 							}
 
@@ -630,18 +635,18 @@ class Tabelle
 								{
 									// Kampflos verloren werten
 									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
 									// Beim Gegner als kampflos gewonnen werten
 									$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
 									$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
 									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
 								}
 								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
 								{
 									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
+									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
+									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
 								}
 							}
 					}
@@ -820,12 +825,18 @@ class Tabelle
 					$ergebnis = $this->Tabelle[$id]['partien'][$x]['anzeige'];
 					$gegnerID = $this->Tabelle[$id]['partien'][$x]['gegner'];
 					$gegnerNummer = $this->Tabelle[$gegnerID]['platz'];
-					$this->Kreuztabelle[$i]['partien'][$gegnerNummer] = $ergebnis;
+					if(strlen($this->Kreuztabelle[$i]['partien'][$gegnerNummer]) > 0)
+						$this->Kreuztabelle[$i]['partien'][$gegnerNummer] .= $ergebnis;
+					else
+						$this->Kreuztabelle[$i]['partien'][$gegnerNummer] = $ergebnis;
 				}
 			}
 
 			$i++;
 		}
+		//echo '<pre>';
+		//print_r($this->Kreuztabelle);
+		//echo '</pre>';
 	}
 
 	public function getTabelle()

@@ -384,11 +384,29 @@ class tl_schachturnier_partien extends Backend
 	public function listGames($arrRow)
 	{
 		static $runde; // Speichert die aktuelle Runde
+		static $maxBrett; // Speichert die höchste Brettnummer
+		
+		// Höchste Brettnummer ermitteln, wenn noch 0
+		if(!$maxBrett)
+		{
+			// Partien laden
+			$objPartien = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid=?')
+			                                      ->execute(\Input::get('id'));
+			if($objPartien->numRows)
+			{
+				// Datensätze verarbeiten
+				while($objPartien->next())
+				{
+					if($objPartien->board > $maxBrett) $maxBrett = $objPartien->board;
+				}
+			}
+		}
 
 		$weiss = self::getPlayer($arrRow['whiteName']);
 		$schwarz = self::getPlayer($arrRow['blackName']);
 
 		$trenner = ' - ';
+		$style = '';
 		// Ergebnisfarbe grün/rot
 		if($arrRow['result'])
 		{
@@ -398,13 +416,13 @@ class tl_schachturnier_partien extends Backend
 		elseif(!$weiss || !$schwarz) $css = 'color:green;';
 		else $css = 'color:red;';
 
-		// Rundenfarbe
-		if($runde && ($arrRow['round'] != $runde))
+		// Rahmen nach jeder Runde
+		if($arrRow['board'] == $maxBrett)
 		{
-			$css .= 'padding-top:5px;border-top:1px solid black;';
+			$style = ' linie';
 		}
 		
-		$temp = '<div class="tl_content_left" style="'.$css.'">';
+		$temp = '<div class="tl_content_left'.$style.'" style="'.$css.'">';
 		$temp .= '<span style="display:inline-block; width:5%;">'.$arrRow['round'].'.'.$arrRow['board'].'</span>';
 		if($weiss && $schwarz)
 		{
