@@ -1,5 +1,10 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.1.2 (2025-11-16)
+
+* Fix: Generierung der Tabelle -> kampflos falsch dargestellt, Punkte falsch addiert, unklare Ergebnisdarstellung
+* Change: Unbeendete Partien werden im Backend jetzt in blau angezeigt
+
 ## Version 2.1.1 (2025-01-28)
 
 * Fix: Warning: Undefined array key 1 in Resources/contao/templates/ce_schachturnier_paarungen.html5 (line 13) 

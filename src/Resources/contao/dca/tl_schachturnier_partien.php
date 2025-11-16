@@ -414,6 +414,7 @@ class tl_schachturnier_partien extends Backend
 			$trenner = ' '.$arrRow['result'].' ';
 		}
 		elseif(!$weiss || !$schwarz) $css = 'color:green;';
+		elseif(!$arrRow['result'] && !strpos($weiss, 'strike>') && !strpos($schwarz, 'strike>')) $css = 'color:blue;';
 		else $css = 'color:red;';
 
 		// Rahmen nach jeder Runde

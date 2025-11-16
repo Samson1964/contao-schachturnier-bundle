@@ -131,525 +131,153 @@ class Tabelle
 				}
 				else
 				{
-					// Reguläre Paarung -> auswerten
+					// Punkte ermitteln
 					switch($objResult->result)
 					{
 						case '1:0':
-							// =======================================================
-							// Partie beim Weiß-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-							{
-								// Weiß-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten, also keine Punkte addieren
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(1)', 'gegner' => $objResult->blackName);
-								}
-								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
-									$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
-									$this->Tabelle[$objResult->whiteName]['siege'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName);
-								}
-							}
-							else
-							{
-								// Weiß-Spieler normal werten
-								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
-								$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
-								$this->Tabelle[$objResult->whiteName]['siege'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName);
-							}
-
-							// =======================================================
-							// Partie beim Schwarz-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Schwarz-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(0)', 'gegner' => $objResult->whiteName);
-								}
-								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName);
-								}
-							}
-							else
-							{
-								// Schwarz-Spieler normal werten
-								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName);
-							}
+							$weiss_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+							$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							$weiss_runde = ['ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName];
+							$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName];
 							break;
-
 						case '+:-':
-							// =======================================================
-							// Partie beim Weiß-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-							{
-								// Weiß-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten, also keine Punkte addieren
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(+)', 'gegner' => $objResult->blackName);
-								}
-								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
-									$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
-									$this->Tabelle[$objResult->whiteName]['siege'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
-								}
-							}
-							else
-							{
-								// Weiß-Spieler normal werten
-								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
-								$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
-								$this->Tabelle[$objResult->whiteName]['siege'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
-							}
-
-							// =======================================================
-							// Partie beim Schwarz-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Schwarz-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->whiteName);
-								}
-								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
-								}
-							}
-							else
-							{
-								// Schwarz-Spieler normal werten
-								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
-							}
+							$weiss_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+							$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							$weiss_runde = ['ergebnis' => 1, 'anzeige' => '+', 'gegner' => $objResult->blackName];
+							$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->whiteName];
 							break;
-
 						case '0:1':
-							// =======================================================
-							// Partie beim Weiß-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-							{
-								// Weiß-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten, also keine Punkte addieren
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(0)', 'gegner' => $objResult->blackName);
-								}
-								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName);
-								}
-							}
-							else
-							{
-								// Weiß-Spieler normal werten
-								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName);
-							}
-
-							// =======================================================
-							// Partie beim Schwarz-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Schwarz-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(1)', 'gegner' => $objResult->whiteName);
-								}
-								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
-									$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
-									$this->Tabelle[$objResult->blackName]['siege'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName);
-								}
-							}
-							else
-							{
-								// Schwarz-Spieler normal werten
-								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
-								$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
-								$this->Tabelle[$objResult->blackName]['siege'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName);
-							}
+							$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							$schwarz_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+							$weiss_runde = ['ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName];
+							$schwarz_runde = ['ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName];
 							break;
-
 						case '-:+':
-							// =======================================================
-							// Partie beim Weiß-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-							{
-								// Weiß-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten, also keine Punkte addieren
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->blackName);
-								}
-								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
-								}
-							}
-							else
-							{
-								// Weiß-Spieler normal werten
-								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
-							}
-
-							// =======================================================
-							// Partie beim Schwarz-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Schwarz-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(+)', 'gegner' => $objResult->whiteName);
-								}
-								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
-									$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
-									$this->Tabelle[$objResult->blackName]['siege'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
-								}
-							}
-							else
-							{
-								// Schwarz-Spieler normal werten
-								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
-								$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
-								$this->Tabelle[$objResult->blackName]['siege'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
-							}
+							$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							$schwarz_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+							$weiss_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->blackName];
+							$schwarz_runde = ['ergebnis' => 1, 'anzeige' => '+', 'gegner' => $objResult->whiteName];
 							break;
-
 						case '½:½':
-							// =======================================================
-							// Partie beim ausgeschiedenen Weiß-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-							{
-								// Weiß-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten, also keine Punkte addieren
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(½)', 'gegner' => $objResult->blackName);
-								}
-								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
-									$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
-								}
-								// =========================================================
-								// Partie beim nichtausgeschiedenen Schwarz-Spieler addieren
-								// =========================================================
-								if(!$this->Tabelle[$objResult->blackName]['ausgeschieden'])
-								{
-									// Weiß-Spieler ist ausgeschieden
-									if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-									{
-										// Alle Partien als kampflos gewonnen werten
-										$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-										$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
-										$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
-										$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '(½)', 'gegner' => $objResult->whiteName);
-									}
-									elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-									{
-										// Wie gespielt werten
-										$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-										$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
-										$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-										$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
-									}
-								}
-							}
-
-							// =======================================================
-							// Partie beim ausgeschiedenen Schwarz-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Schwarz-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(½)', 'gegner' => $objResult->whiteName);
-								}
-								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
-									$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
-								}
-								// =========================================================
-								// Partie beim nichtausgeschiedenen Weiß-Spieler addieren
-								// =========================================================
-								if(!$this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-								{
-									// Schwarz-Spieler ist ausgeschieden
-									if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-									{
-										// Alle Partien als kampflos gewonnen werten
-										$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-										$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
-										$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
-										$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '(½)', 'gegner' => $objResult->blackName);
-									}
-									elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-									{
-										// Wie gespielt werten
-										$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-										$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
-										$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-										$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
-									}
-								}
-							}
-
-							// =========================================================
-							// Partie bei beiden nichtausgeschiedenen Spieler addieren
-							// =========================================================
-							if(!$this->Tabelle[$objResult->whiteName]['ausgeschieden'] && !$this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Weiß-Spieler normal werten
-								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
-								$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->blackName);
-								// Schwarz-Spieler normal werten
-								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
-								$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => 0.5, 'anzeige' => '½', 'gegner' => $objResult->whiteName);
-							}
+							$weiss_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
+							$schwarz_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
+							$weiss_runde = ['ergebnis' => .5, 'anzeige' => '½', 'gegner' => $objResult->blackName];
+							$schwarz_runde = ['ergebnis' => .5, 'anzeige' => '½', 'gegner' => $objResult->whiteName];
 							break;
-
 						case '=:=':
-							// =======================================================
-							// Partie beim Weiß-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-							{
-								// Weiß-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten, also keine Punkte addieren
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(=)', 'gegner' => $objResult->blackName);
-								}
-								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
-									$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->blackName);
-								}
-							}
-							else
-							{
-								// Weiß-Spieler normal werten
-								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['2punkte'] += .5;
-								$this->Tabelle[$objResult->whiteName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->blackName);
-							}
-
-							// =======================================================
-							// Partie beim Schwarz-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Schwarz-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(=)', 'gegner' => $objResult->whiteName);
-								}
-								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
-									$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->whiteName);
-								}
-							}
-							else
-							{
-								// Schwarz-Spieler normal werten
-								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['2punkte'] += .5;
-								$this->Tabelle[$objResult->blackName]['3punkte'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '=', 'anzeige' => '=', 'gegner' => $objResult->whiteName);
-							}
+							$weiss_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
+							$schwarz_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
+							$weiss_runde = ['ergebnis' => .5, 'anzeige' => '=', 'gegner' => $objResult->blackName];
+							$schwarz_runde = ['ergebnis' => .5, 'anzeige' => '=', 'gegner' => $objResult->whiteName];
 							break;
-
 						case '-:-':
-							// =======================================================
-							// Partie beim Weiß-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-							{
-								// Weiß-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten, also keine Punkte addieren
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->blackName);
-								}
-								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
-								}
-							}
-							else
-							{
-								// Weiß-Spieler normal werten
-								$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-								$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
-							}
-
-							// =======================================================
-							// Partie beim Schwarz-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Schwarz-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '(-)', 'gegner' => $objResult->whiteName);
-								}
-								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
-								}
-							}
-							else
-							{
-								// Schwarz-Spieler normal werten
-								$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-								$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
-							}
+							$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							$weiss_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->blackName];
+							$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->whiteName];
 							break;
-
-						default: // Kein Ergebnis eingetragen
-							// =======================================================
-							// Partie beim Weiß-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
-							{
-								// Weiß-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten, also keine Punkte addieren
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
-									// Beim Gegner als kampflos gewonnen werten
-									$this->Tabelle[$objResult->blackName]['2punkte'] += 1;
-									$this->Tabelle[$objResult->blackName]['3punkte'] += 3;
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
-								}
-								elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->blackName);
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->whiteName);
-								}
-							}
-
-							// =======================================================
-							// Partie beim Schwarz-Spieler addieren
-							// =======================================================
-							if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
-							{
-								// Schwarz-Spieler ist ausgeschieden
-								if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
-								{
-									// Kampflos verloren werten
-									$this->Tabelle[$objResult->blackName]['spiele'] += 1;
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
-									// Beim Gegner als kampflos gewonnen werten
-									$this->Tabelle[$objResult->whiteName]['2punkte'] += 1;
-									$this->Tabelle[$objResult->whiteName]['3punkte'] += 3;
-									$this->Tabelle[$objResult->whiteName]['spiele'] += 1;
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
-								}
-								elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
-								{
-									// Wie gespielt werten
-									$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '-', 'anzeige' => '-', 'gegner' => $objResult->whiteName);
-									$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => '+', 'anzeige' => '+', 'gegner' => $objResult->blackName);
-								}
-							}
+						default:
+							$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							$schwarz_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							$weiss_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->blackName];
+							$schwarz_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->whiteName];
+							break;
 					}
+					
+					// Spieler ist ausgeschieden
+					if($this->Tabelle[$objResult->whiteName]['ausgeschieden'])
+					{
+						// Alle seine Partien kampflos verloren werten, also keine Punkte addieren
+						if($this->Tabelle[$objResult->whiteName]['partienwertung'] == 1)
+						{
+							$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							if($weiss_runde['anzeige'] == '') $weiss_runde['anzeige'] = '-';
+							else $weiss_runde['anzeige'] = '('.$weiss_runde['anzeige'].')';
+							$weiss_runde['ergebnis'] = 0;
+							// Gegner korrigieren, wenn nicht ausgeschieden
+							if(!$this->Tabelle[$objResult->blackName]['ausgeschieden'])
+							{
+								$schwarz_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+								$schwarz_runde['ergebnis'] = 1;
+								$schwarz_runde['anzeige'] = '+';
+							}
+						}
+						// Nur unbeendete Partien als kampflos verloren werten
+						elseif($this->Tabelle[$objResult->whiteName]['partienwertung'] == 2)
+						{
+							if($weiss_partie['spiele'] == 0)
+							{
+								$weiss_partie['spiele'] = 1;
+								$weiss_runde['ergebnis'] = 0;
+								$weiss_runde['anzeige'] = '-';
+							}
+							// Gegner korrigieren, wenn nicht ausgeschieden
+							if(!$this->Tabelle[$objResult->blackName]['ausgeschieden'])
+							{
+								if($schwarz_partie['spiele'] == 0)
+								{
+									$schwarz_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+									$schwarz_runde['ergebnis'] = 1;
+									$schwarz_runde['anzeige'] = '+';
+								}
+							}
+						}
+					}
+
+					// Gegner ist ausgeschieden
+					if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
+					{
+						// Alle seine Partien kampflos verloren werten, also keine Punkte addieren
+						if($this->Tabelle[$objResult->blackName]['partienwertung'] == 1)
+						{
+							$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+							if($schwarz_runde['anzeige'] == '') $schwarz_runde['anzeige'] = '-';
+							else $schwarz_runde['anzeige'] = '('.$schwarz_runde['anzeige'].')';
+							$schwarz_runde['ergebnis'] = 0;
+							// Spieler korrigieren, wenn nicht ausgeschieden
+							if(!$this->Tabelle[$objResult->whiteName]['ausgeschieden'])
+							{
+								$weiss_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+								$weiss_runde['ergebnis'] = 1;
+								$weiss_runde['anzeige'] = '+';
+							}
+						}
+						// Nur unbeendete Partien als kampflos verloren werten
+						elseif($this->Tabelle[$objResult->blackName]['partienwertung'] == 2)
+						{
+							if($schwarz_partie['spiele'] == 0)
+							{
+								$schwarz_partie['spiele'] = 1;
+								$schwarz_runde['ergebnis'] = 0;
+								$schwarz_runde['anzeige'] = '-';
+							}
+							// Spieler korrigieren, wenn nicht ausgeschieden
+							if(!$this->Tabelle[$objResult->whiteName]['ausgeschieden'])
+							{
+								if($weiss_partie['spiele'] == 0)
+								{
+									$weiss_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+									$weiss_runde['ergebnis'] = 1;
+									$weiss_runde['anzeige'] = '+';
+								}
+							}
+						}
+					}
+					
+					// Ergebnis in Tabelle beim Spieler (Weiß) eintragen
+					$this->Tabelle[$objResult->whiteName]['spiele'] += $weiss_partie['spiele'];
+					$this->Tabelle[$objResult->whiteName]['2punkte'] += $weiss_partie['2punkte'];
+					$this->Tabelle[$objResult->whiteName]['3punkte'] += $weiss_partie['3punkte'];
+					$this->Tabelle[$objResult->whiteName]['siege'] += $weiss_partie['siege'];
+					$this->Tabelle[$objResult->whiteName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => $weiss_runde['ergebnis'], 'anzeige' => $weiss_runde['anzeige'], 'gegner' => $weiss_runde['gegner']);
+					
+					// Ergebnis in Tabelle beim Gegner (Schwarz) eintragen
+					$this->Tabelle[$objResult->blackName]['spiele'] += $schwarz_partie['spiele'];
+					$this->Tabelle[$objResult->blackName]['2punkte'] += $schwarz_partie['2punkte'];
+					$this->Tabelle[$objResult->blackName]['3punkte'] += $schwarz_partie['3punkte'];
+					$this->Tabelle[$objResult->blackName]['siege'] += $schwarz_partie['siege'];
+					$this->Tabelle[$objResult->blackName]['partien'][] = array('runde' => $objResult->round, 'ergebnis' => $schwarz_runde['ergebnis'], 'anzeige' => $schwarz_runde['anzeige'], 'gegner' => $schwarz_runde['gegner']);
+					
 				}
 			}
 		}
