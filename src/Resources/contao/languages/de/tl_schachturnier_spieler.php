@@ -24,10 +24,12 @@ $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['unabsteigbar'] = array('Unabste
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['aufsteiger'] = array('Aufsteiger', 'Spieler als Aufsteiger markieren. In Ranglisten werden Aufsteiger grün markiert.');
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['absteiger'] = array('Absteiger', 'Spieler als Absteiger markieren. In Ranglisten werden Absteiger rot markiert.');
 
-$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['rating_legend'] = 'Wertungszahlen';
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['rating_legend'] = 'Herkunft und Wertungszahlen';
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['dwz'] = array('DWZ', 'Deutsche Wertungszahl');
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['elo'] = array('Elo', 'FIDE-Wertungszahl');
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['titel'] = array('FIDE-Titel', 'FIDE-Titel');
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['country'] = array('FIDE-Land', 'FIDE-Land');
+$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['verein'] = array('Verein', 'Verein');
 
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['image_legend'] = 'Bild';
 $GLOBALS['TL_LANG']['tl_schachturnier_spieler']['addImage'] = array('Ein Bild hinzufügen', 'Ein Bild des Spielers hinzufügen.');

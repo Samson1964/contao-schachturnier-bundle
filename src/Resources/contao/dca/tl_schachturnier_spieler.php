@@ -109,7 +109,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 	'palettes' => array
 	(
 		'__selector__'                => array('addImage', 'ausgeschieden'),
-		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},freilos,herkunft,ausgeschieden;{qualifikationen_legend},unaufsteigbar,unabsteigbar,aufsteiger,absteiger;{rating_legend},dwz,elo,titel;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
+		'default'                     => '{name_legend},firstname,lastname,nummer;{status_legend},freilos,herkunft,ausgeschieden;{qualifikationen_legend},unaufsteigbar,unabsteigbar,aufsteiger,absteiger;{rating_legend},dwz,elo,titel,country,verein;{image_legend:hide},addImage;{info_legend:hide},info;{publish_legend},published'
 	),
 
 	// Unterpaletten
@@ -229,6 +229,34 @@ $GLOBALS['TL_DCA']['tl_schachturnier_spieler'] = array
 			),
 			'sql'                     => "varchar(3) NOT NULL default ''"
 		), 
+		'country' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['country'],
+			'exclude'                 => true,
+			'filter'                  => true,
+			'sorting'                 => true,
+			'flag'                    => 1,
+			'inputType'               => 'select',
+			'options'                 => System::getCountries(),
+			'eval'                    => array
+			(
+				'includeBlankOption'  => true, 
+				'chosen'              => true, 
+				'tl_class'            => 'w50'
+			),
+			'sql'                     => "varchar(2) NOT NULL default ''"
+		),  
+		'verein' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['verein'],
+			'exclude'                 => true,
+			'search'                  => true,
+			'sorting'                 => true,
+			'flag'                    => 1,
+			'inputType'               => 'text',
+			'eval'                    => array('maxlength'=>255, 'tl_class'=>'w50'),
+			'sql'                     => "varchar(255) NOT NULL default ''"
+		),
 		'ausgeschieden' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier_spieler']['ausgeschieden'],

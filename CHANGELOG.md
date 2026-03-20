@@ -1,5 +1,18 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.2.0 (2026-03-20)
+
+* Change: CSS Kopfzeile heller
+* Add: Paket components/flag-icon-css
+* Add: tl_schachturnier_spieler.country für die Nation des Spielers
+* Fix: Anzeige der Flagge in Tabellen hat nicht funktioniert
+* Add: tl_content.schachturnier_runde -> Angabe einer bestimmten Runde
+* Add: tl_content.schachturnier_options -> Option Foto hinzugefügt
+* Add: tl_schachturnier.imageSize_Ergebnisse und imageSize_Tabelle -> Festlegung von Bildgrößen in Ausgaben
+* Fix: Code der Inhaltselemente-Klasse Schachturnier überarbeitet
+* Add: tl_schachturnier_spieler.verein für den Verein des Spielers
+* Add: Rangliste anhand Rundennummer ausgeben
+
 ## Version 2.1.2 (2025-11-16)
 
 * Fix: Generierung der Tabelle -> kampflos falsch dargestellt, Punkte falsch addiert, unklare Ergebnisdarstellung

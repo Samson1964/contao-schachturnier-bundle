@@ -124,7 +124,7 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate,fromDateView,toDateView;{wertungen_legend},wertungen;{aufabstieg_legend:hide},aufsteiger,absteiger;{publish_legend},published,complete'
+		'default'                     => '{title_legend},title,type;{date_legend},fromDate,toDate,fromDateView,toDateView;{wertungen_legend},wertungen;{aufabstieg_legend:hide},aufsteiger,absteiger;{imageSize_legend:hide},imageSize_Tabelle,imageSize_Ergebnisse;{publish_legend},published,complete'
 	),
 
 	// Fields
@@ -288,6 +288,32 @@ $GLOBALS['TL_DCA']['tl_schachturnier'] = array
 			),
 			'sql'                     => "int(3) unsigned NOT NULL default '0'"
 		),
+		'imageSize_Tabelle' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['imageSize_Tabelle'],
+			'exclude'                 => true,
+			'inputType'               => 'imageSize',
+			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
+			'eval'                    => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50'),
+			'options_callback' => static function ()
+			{
+				return System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(BackendUser::getInstance());
+			},
+			'sql'                     => "varchar(255) NOT NULL default ''"
+		), 
+		'imageSize_Ergebnisse' => array
+		(
+			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['imageSize_Ergebnisse'],
+			'exclude'                 => true,
+			'inputType'               => 'imageSize',
+			'reference'               => &$GLOBALS['TL_LANG']['MSC'],
+			'eval'                    => array('rgxp'=>'natural', 'includeBlankOption'=>true, 'nospace'=>true, 'helpwizard'=>true, 'tl_class'=>'w50'),
+			'options_callback' => static function ()
+			{
+				return System::getContainer()->get('contao.image.image_sizes')->getOptionsForUser(BackendUser::getInstance());
+			},
+			'sql'                     => "varchar(255) NOT NULL default ''"
+		), 
 		'complete' => array
 		(
 			'label'                   => &$GLOBALS['TL_LANG']['tl_schachturnier']['complete'],

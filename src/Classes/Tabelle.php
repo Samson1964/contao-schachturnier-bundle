@@ -8,7 +8,8 @@ class Tabelle
 	var $Tabelle = array();
 	var $Kreuztabelle = array();
 	var $TurnierID;
-	var $turniermodus;
+	var $Turniermodus;
+	var $Bildgroesse;
 
 	public function __construct($id)
 	{
@@ -29,6 +30,7 @@ class Tabelle
 		                                     ->execute($id);
 
 		$this->Turniermodus = $objTurnier->type; // Turniermodus speichern
+		$this->Bildgroesse = $objTurnier->imageSize_Tabelle;
 		self::AufAbsteigerMarkieren($objTurnier->aufsteiger, $objTurnier->absteiger);
 		//echo "<pre>";
 		//print_r($this->Kreuztabelle);
@@ -78,7 +80,7 @@ class Tabelle
 					'vorname'        => $objResult->firstname,
 					'nachname'       => $objResult->lastname,
 					'titel'          => $objResult->titel,
-					'land'           => $objResult->land,
+					'land'           => $objResult->country ? '<span class="flag-icon flag-icon-'.$objResult->country.'" title="'.$objResult->country.'"></span>' : '',
 					'verein'         => $objResult->verein,
 					'ausgeschieden'  => $objResult->ausgeschieden,
 					'partienwertung' => $objResult->partienwertung,
@@ -86,7 +88,7 @@ class Tabelle
 					'freilos'        => $objResult->freilos,
 					'dwz'            => $objResult->dwz,
 					'elo'            => $objResult->elo,
-					'bild'           => $objResult->singleSRC,
+					'bild'           => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getFoto($objResult, $this->Bildgroesse),
 					'unaufsteigbar'  => $objResult->unaufsteigbar,
 					'unabsteigbar'   => $objResult->unabsteigbar,
 					'aufsteiger'     => $objResult->aufsteiger,

@@ -27,10 +27,10 @@ class Helper
 							$ergebnis = 0.5; break;
 						case '+': // Darf nicht an erster Stelle stehen, weil 0 als + interpretiert wird
 							$ergebnis = 1; break;
-						default: 
+						default:
 							$ergebnis = $game['ergebnis'];
 					}
-					
+
 					$punkteGegner = $spieler['id'.$game['gegner']]['2punkte'] * $ergebnis;
 					$spieler[$id]['sobe'] += $punkteGegner;
 				}
@@ -132,7 +132,7 @@ class Helper
 			}
 
 		}
-		
+
 
 		// Absteiger markieren, Spieler-Array von hinten nach vorn durchlaufen
 		$index = 1;
@@ -168,39 +168,33 @@ class Helper
 	}
 
 	/***********************
-	 * Funktion SpielerErgebnisse
+	 * Funktion Ergebnisse
 	 * xxx
-	 * @param array: Spieler-Array
+	 * @param object: Turnier- und Spieler-Objekt
 	 * @retun array: Modifiziertes Spieler-Array
 	 */
-	public static function SpielerErgebnisse($turnierId)
+	public static function Ergebnisse($objTurnier, $objSpieler, $Runde = '')
 	{
-		// Spieler laden
-		$objSpieler = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? ORDER BY nummer ASC')
-		                                      ->execute($turnierId);
 		$spieler = array();
+		
 		if($objSpieler->numRows)
 		{
 			// Datensätze verarbeiten
 			while($objSpieler->next())
 			{
-				// Name generieren
-				if($objSpieler->freilos) $name = $objSpieler->lastname;
-				else $name = $objSpieler->titel ? $objSpieler->titel.' '.$objSpieler->firstname.' '.$objSpieler->lastname : $objSpieler->firstname.' '.$objSpieler->lastname;
-				
 				if(!$objSpieler->freilos)
 				{
 					$spieler['id'.$objSpieler->id] = array
 					(
 						'css'           => '',
 						'nummer'        => $objSpieler->nummer,
-						'name'          => $name,
+						'name'          => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getSpielername($objSpieler),
 						'titel'         => $objSpieler->titel,
-						'land'          => $objSpieler->land,
+						'land'          => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getLand($objSpieler->country),
 						'verein'        => $objSpieler->verein,
 						'dwz'           => $objSpieler->dwz,
 						'elo'           => $objSpieler->elo,
-						'bild'          => $objSpieler->singleSRC,
+						'bild'          => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getFoto($objSpieler, $objTurnier->imageSize_Tabelle),
 						'unaufsteigbar' => $objSpieler->unaufsteigbar,
 						'unabsteigbar'  => $objSpieler->unabsteigbar,
 						'aufsteiger'    => $objSpieler->aufsteiger,
@@ -220,81 +214,84 @@ class Helper
 
 		// Paarungen laden
 		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ?')
-		                                     ->execute($turnierId, 1);
+		                                     ->execute($objTurnier->id, 1);
 		if($objResult->numRows)
 		{
 			// Datensätze verarbeiten
 			while($objResult->next())
 			{
-				switch($objResult->result)
+				if(($Runde != '' && $objResult->round <= $Runde) || $Runde == '')
 				{
-					case '1:0':   
-						$spieler['id'.$objResult->whiteName]['spiele'] += 1;
-						$spieler['id'.$objResult->whiteName]['2punkte'] += 1;
-						$spieler['id'.$objResult->whiteName]['3punkte'] += 3;
-						$spieler['id'.$objResult->whiteName]['siege'] += 1;
-						$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => 1, 'gegner' => $objResult->blackName);
-						$spieler['id'.$objResult->blackName]['spiele'] += 1; 
-						$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => 0, 'gegner' => $objResult->whiteName);
-						break;
-					case '+:-':
-						$spieler['id'.$objResult->whiteName]['spiele'] += 1;
-						$spieler['id'.$objResult->whiteName]['2punkte'] += 1;
-						$spieler['id'.$objResult->whiteName]['3punkte'] += 3;
-						$spieler['id'.$objResult->whiteName]['siege'] += 1;
-						$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => '+', 'gegner' => $objResult->blackName);
-						$spieler['id'.$objResult->blackName]['spiele'] += 1; 
-						$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'gegner' => $objResult->whiteName);
-						break;
-					case '0:1':
-						$spieler['id'.$objResult->whiteName]['spiele'] += 1;
-						$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => 0, 'gegner' => $objResult->blackName);
-						$spieler['id'.$objResult->blackName]['spiele'] += 1;
-						$spieler['id'.$objResult->blackName]['2punkte'] += 1;
-						$spieler['id'.$objResult->blackName]['3punkte'] += 3;
-						$spieler['id'.$objResult->blackName]['siege'] += 1;
-						$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => 1, 'gegner' => $objResult->whiteName);
-						break;
-					case '-:+':
-						$spieler['id'.$objResult->whiteName]['spiele'] += 1;
-						$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'gegner' => $objResult->blackName);
-						$spieler['id'.$objResult->blackName]['spiele'] += 1;
-						$spieler['id'.$objResult->blackName]['2punkte'] += 1;
-						$spieler['id'.$objResult->blackName]['3punkte'] += 3;
-						$spieler['id'.$objResult->blackName]['siege'] += 1;
-						$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => '+', 'gegner' => $objResult->whiteName);
-						break;
-					case '½:½':
-						$spieler['id'.$objResult->whiteName]['spiele'] += 1;
-						$spieler['id'.$objResult->whiteName]['2punkte'] += .5;
-						$spieler['id'.$objResult->whiteName]['3punkte'] += 1;
-						$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'gegner' => $objResult->blackName);
-						$spieler['id'.$objResult->blackName]['spiele'] += 1;
-						$spieler['id'.$objResult->blackName]['2punkte'] += .5;
-						$spieler['id'.$objResult->blackName]['3punkte'] += 1;
-						$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => 0.5, 'gegner' => $objResult->whiteName);
-						break;
-					case '=:=':
-						$spieler['id'.$objResult->whiteName]['spiele'] += 1;
-						$spieler['id'.$objResult->whiteName]['2punkte'] += .5;
-						$spieler['id'.$objResult->whiteName]['3punkte'] += 1;
-						$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => '=', 'gegner' => $objResult->blackName);
-						$spieler['id'.$objResult->blackName]['spiele'] += 1;
-						$spieler['id'.$objResult->blackName]['2punkte'] += .5;
-						$spieler['id'.$objResult->blackName]['3punkte'] += 1;
-						$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => '=', 'gegner' => $objResult->whiteName);
-						break;
-					case '-:-':
-						$spieler['id'.$objResult->whiteName]['spiele'] += 1;
-						$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'gegner' => $objResult->blackName);
-						$spieler['id'.$objResult->blackName]['spiele'] += 1;
-						$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'gegner' => $objResult->whiteName);
-						break;
-					default:
+					switch($objResult->result)
+					{
+						case '1:0':
+							$spieler['id'.$objResult->whiteName]['spiele'] += 1;
+							$spieler['id'.$objResult->whiteName]['2punkte'] += 1;
+							$spieler['id'.$objResult->whiteName]['3punkte'] += 3;
+							$spieler['id'.$objResult->whiteName]['siege'] += 1;
+							$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => 1, 'gegner' => $objResult->blackName);
+							$spieler['id'.$objResult->blackName]['spiele'] += 1;
+							$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => 0, 'gegner' => $objResult->whiteName);
+							break;
+						case '+:-':
+							$spieler['id'.$objResult->whiteName]['spiele'] += 1;
+							$spieler['id'.$objResult->whiteName]['2punkte'] += 1;
+							$spieler['id'.$objResult->whiteName]['3punkte'] += 3;
+							$spieler['id'.$objResult->whiteName]['siege'] += 1;
+							$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => '+', 'gegner' => $objResult->blackName);
+							$spieler['id'.$objResult->blackName]['spiele'] += 1;
+							$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'gegner' => $objResult->whiteName);
+							break;
+						case '0:1':
+							$spieler['id'.$objResult->whiteName]['spiele'] += 1;
+							$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => 0, 'gegner' => $objResult->blackName);
+							$spieler['id'.$objResult->blackName]['spiele'] += 1;
+							$spieler['id'.$objResult->blackName]['2punkte'] += 1;
+							$spieler['id'.$objResult->blackName]['3punkte'] += 3;
+							$spieler['id'.$objResult->blackName]['siege'] += 1;
+							$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => 1, 'gegner' => $objResult->whiteName);
+							break;
+						case '-:+':
+							$spieler['id'.$objResult->whiteName]['spiele'] += 1;
+							$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'gegner' => $objResult->blackName);
+							$spieler['id'.$objResult->blackName]['spiele'] += 1;
+							$spieler['id'.$objResult->blackName]['2punkte'] += 1;
+							$spieler['id'.$objResult->blackName]['3punkte'] += 3;
+							$spieler['id'.$objResult->blackName]['siege'] += 1;
+							$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => '+', 'gegner' => $objResult->whiteName);
+							break;
+						case '½:½':
+							$spieler['id'.$objResult->whiteName]['spiele'] += 1;
+							$spieler['id'.$objResult->whiteName]['2punkte'] += .5;
+							$spieler['id'.$objResult->whiteName]['3punkte'] += 1;
+							$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => 0.5, 'gegner' => $objResult->blackName);
+							$spieler['id'.$objResult->blackName]['spiele'] += 1;
+							$spieler['id'.$objResult->blackName]['2punkte'] += .5;
+							$spieler['id'.$objResult->blackName]['3punkte'] += 1;
+							$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => 0.5, 'gegner' => $objResult->whiteName);
+							break;
+						case '=:=':
+							$spieler['id'.$objResult->whiteName]['spiele'] += 1;
+							$spieler['id'.$objResult->whiteName]['2punkte'] += .5;
+							$spieler['id'.$objResult->whiteName]['3punkte'] += 1;
+							$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => '=', 'gegner' => $objResult->blackName);
+							$spieler['id'.$objResult->blackName]['spiele'] += 1;
+							$spieler['id'.$objResult->blackName]['2punkte'] += .5;
+							$spieler['id'.$objResult->blackName]['3punkte'] += 1;
+							$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => '=', 'gegner' => $objResult->whiteName);
+							break;
+						case '-:-':
+							$spieler['id'.$objResult->whiteName]['spiele'] += 1;
+							$spieler['id'.$objResult->whiteName]['partien'][] = array('ergebnis' => '-', 'gegner' => $objResult->blackName);
+							$spieler['id'.$objResult->blackName]['spiele'] += 1;
+							$spieler['id'.$objResult->blackName]['partien'][] = array('ergebnis' => '-', 'gegner' => $objResult->whiteName);
+							break;
+						default:
+					}
 				}
 			}
 		}
-	
+
 		return $spieler;
 	}
 
@@ -302,7 +299,7 @@ class Helper
 	 * Funktion Ergebnismatrix
 	 * xxx
 	 * @param array: Spieler-Array
-	 * @retun array: Modifiziertes Spieler-Array
+	 * @return array: Modifiziertes Spieler-Array
 	 */
 	public static function Ergebnismatrix($spieler)
 	{
@@ -342,7 +339,69 @@ class Helper
 				}
 			}
 		}
-		
+
 		return $spieler;
 	}
+
+	/***********************
+	 * Funktion getFoto
+	 * Gibt das HTML für ein Bild zurück
+	 * @param objSpieler (object): Spieler-Objekt
+	 * @param bildgroesse (string): Format des Bildes
+	 * @return string: HTML für das Bild
+	 */
+	public static function getFoto($objSpieler, $bildgroesse = false)
+	{
+		if($objSpieler->addImage)
+		{
+			if($objSpieler->singleSRC)
+			{
+				$bildgroesse = (array)unserialize($bildgroesse);
+				$objFile = \FilesModel::findByPk($objSpieler->singleSRC);
+				$objBild = new \stdClass();
+				\Controller::addImageToTemplate($objBild, array('singleSRC' => $objFile->path, 'size' => $bildgroesse), \Config::get('maxImageWidth'), null, $objFile);
+				//print_r($bildgroesse).'<br>';
+				//echo $objBild->singleSRC.'<br>';
+				//echo $objBild->src.'<br>';
+				//echo $objBild->imgSize.'<br>';
+				//echo $objBild->alt.'<br>';
+				//echo $objBild->caption.'<br><br>';
+				return '<a href="'.$objBild->singleSRC.'" data-lightbox="lightbox"><img src="'.$objBild->src.'" '.$objBild->imgSize.'></a>';
+			}
+		}
+		return false;
+	}
+
+	/***********************
+	 * Funktion getSpielername
+	 * Gibt den Spielernamen anhand des Spieler-Objektes zurück
+	 * @param objSpieler (object): Spieler-Objekt
+	 * @return string: Spielername in der Form "Titel Vorname Nachname"
+	 */
+	public static function getSpielername($objSpieler)
+	{
+		// Name generieren
+		if($objSpieler->freilos) $name = $objSpieler->lastname;
+		else $name = $objSpieler->titel ? $objSpieler->titel.' '.$objSpieler->firstname.' '.$objSpieler->lastname : $objSpieler->firstname.' '.$objSpieler->lastname;
+
+		// Herkunft (Neuling, Absteiger usw.) hinzufügen
+		$herkunft = (array)unserialize($objSpieler->herkunft);
+		if(count($herkunft) > 0 && $herkunft[0] != '') $name = $name.' ('.implode(',', $herkunft).')';
+		
+		return $name;
+	}
+
+	/***********************
+	 * Funktion getLand
+	 * Gibt den HTML-Code für das Land anhand des Spieler-Objektes zurück
+	 * @param objSpieler (object): Spieler-Objekt
+	 * @return string: Land als HTML
+	 */
+	public static function getLand($country)
+	{
+		$laender = \System::getCountries();
+		$land = $country ? '<span class="flag-icon flag-icon-'.$country.'" title="'.$laender[$country].'"></span>' : '';
+		return $land;
+	}
+
 }

@@ -3,6 +3,10 @@
 	margin-bottom: 10px;
 }
 
+/*.ce_schachturnier table {
+	width: 100%;
+}*/
+
 .ce_schachturnier th,
 .ce_schachturnier td {
 	padding: 1px 5px 1px 5px;
@@ -14,8 +18,8 @@
 }
 
 .ce_schachturnier tr.kopf th {
-	background-color: #3A3A3A;
-	color: #ffffff;
+	background-color: #CDCDCD;
+	color: #000000;
 }
 
 .ce_schachturnier tr.freilos {
@@ -36,6 +40,10 @@
 .ce_schachturnier td.name {
 	width: 36%;
 	min-width: 200px;
+}
+
+.ce_schachturnier td.name img {
+	margin-right: 3px;
 }
 
 .ce_schachturnier td.rating {

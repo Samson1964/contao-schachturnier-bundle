@@ -28,57 +28,64 @@ class Schachturnier extends \ContentElement
 	protected function compile()
 	{
 
-		// Optionen laden
+		// Symlink für das externe Bundle components/flag-icon-css erstellen, wenn noch nicht vorhanden
+		if(!is_link(TL_ROOT.'/web/bundles/flag-icon-css')) symlink(TL_ROOT.'/vendor/components/flag-icon-css/', TL_ROOT.'/web/bundles/flag-icon-css'); // Ziel, Name
+		$GLOBALS['TL_CSS'][] = 'bundles/flag-icon-css/css/flag-icon.min.css';
+
+		// Turnier-Objekt laden
+		$objTurnier = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier WHERE id=?')
+		                                      ->execute($this->schachturnier);
+		// Spieler-Objekt laden
+		$objSpieler = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? AND published = ? ORDER BY nummer ASC')
+		                                      ->execute($this->schachturnier, 1);
+
+		// Inhaltselement-Optionen laden
 		$view = (array)unserialize($this->schachturnier_options);
 		
 		switch($this->schachturnier_mode)
 		{
 			case 'subscriber': // Teilnehmerliste
+
 				$this->strTemplate = 'ce_schachturnier_teilnehmer';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
-				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? ORDER BY nummer ASC')
-				                                     ->execute($this->schachturnier);
 				$daten = array();
-				if($objResult->numRows)
+
+				if($objSpieler->numRows)
 				{
 					$nummer = 0;
 					// Datensätze verarbeiten
-					while($objResult->next())
+					while($objSpieler->next())
 					{
 						$nummer++;
-						// Name generieren
-						if($objResult->freilos) $name = $objResult->lastname;
-						else $name = $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname;
-						
 						$daten[] = array
 						(
-							'css'    => $objResult->freilos ? 'freilos' : '',
+							'css'    => $objSpieler->freilos ? 'freilos' : '',
 							'nummer' => $nummer,
-							'name'   => $name,
-							'titel'  => $objResult->titel,
-							'land'   => $objResult->land,
-							'verein' => $objResult->verein,
-							'dwz'    => $objResult->dwz,
-							'elo'    => $objResult->elo,
-							'bild'   => $objResult->singleSRC
+							'name'   => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getSpielername($objSpieler),
+							'titel'  => $objSpieler->titel,
+							'land'   => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getLand($objSpieler->country),
+							'verein' => $objSpieler->verein,
+							'dwz'    => $objSpieler->dwz,
+							'elo'    => $objSpieler->elo,
+							'bild'   => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getFoto($objSpieler, $objTurnier->imageSize_Tabelle)
 						);
 					}
 				}
 				break;
+
 			case 'ranking'    : // Rangliste
+
 				$this->strTemplate = 'ce_schachturnier_rangliste';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
 
-				// Spieler initialisieren und Ergebnisse eintragen
-				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::SpielerErgebnisse($this->schachturnier);
+				// Ergebnisse bei den Spielern hinzufügen
+				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Ergebnisse($objTurnier, $objSpieler, $this->schachturnier_runde);
+
 				// Sonneborn-Berger-Wertung berechnen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::SonnebornBergerWertung($spieler);
 				// Buchholz-Wertung berechnen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::BuchholzWertung($spieler);
 
-				// Turnier-Stammdaten laden
-				$objTurnier = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier WHERE id = ?')
-				                                      ->execute($this->schachturnier);
 				// Spieler sortieren nach gewünschter Wertungsreihenfolge
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Rangliste($spieler, unserialize($objTurnier->wertungen));
 
@@ -90,24 +97,23 @@ class Schachturnier extends \ContentElement
 				break;
 
 			case 'cross_nr'   : // Kreuztabelle (nach Nummern)
-				$spieler = self::getSpieler();
+				$spieler = self::getSpieler($objTurnier, $objSpieler);
 				break;
+
 			case 'cross_rang' : // Kreuztabelle (nach Rang)
 				$this->strTemplate = 'ce_schachturnier_kreuztabelle';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
 
 				$tabelle = new \Schachbulle\ContaoSchachturnierBundle\Classes\Tabelle($this->schachturnier);
 
-				// Spieler initialisieren und Ergebnisse eintragen
-				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::SpielerErgebnisse($this->schachturnier);
+				// Ergebnisse bei den Spielern hinzufügen
+				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Ergebnisse($objTurnier, $objSpieler);
+
 				// Sonneborn-Berger-Wertung berechnen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::SonnebornBergerWertung($spieler);
 				// Buchholz-Wertung berechnen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::BuchholzWertung($spieler);
 
-				// Turnier-Stammdaten laden
-				$objTurnier = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier WHERE id = ?')
-				                                      ->execute($this->schachturnier);
 				// Spieler sortieren nach gewünschter Wertungsreihenfolge
 				if($spieler)
 				{
@@ -133,7 +139,7 @@ class Schachturnier extends \ContentElement
 				$this->strTemplate = 'ce_schachturnier_paarungen';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
 
-				$spieler = self::getSpieler();
+				$spieler = self::getSpieler($objTurnier, $objSpieler);
 				$termin = self::getTermine();
 
 				// Paarungen laden
@@ -211,6 +217,7 @@ class Schachturnier extends \ContentElement
 		$this->Template->class = "ce_schachturnier";
 		$this->Template->turnierdatum = $turnierdatum;
 		$this->Template->tabelle = $daten;
+		$this->Template->view_foto = in_array('foto', $view);
 		$this->Template->view_land = in_array('land', $view);
 		$this->Template->view_elo = in_array('elo', $view);
 		$this->Template->view_dwz = in_array('dwz', $view);
@@ -247,32 +254,31 @@ class Schachturnier extends \ContentElement
 		return $name;
 	}
 
-	function getSpieler()
+	function getSpieler($objTurnier, $objSpieler)
 	{
-		// Spieler laden
-		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_spieler WHERE pid = ? AND published = ?')
-		                                     ->execute($this->schachturnier, 1);
-		
 		$spieler = array();
-		if($objResult->numRows)
+		if($objSpieler->numRows)
 		{
+			$nummer = 0;
 			// Datensätze verarbeiten
-			while($objResult->next())
+			while($objSpieler->next())
 			{
-				$spieler[$objResult->id] = array
+				$nummer++;
+				$spieler[$objSpieler->id] = array
 				(
-					'name'          => $objResult->titel ? $objResult->titel.' '.$objResult->firstname.' '.$objResult->lastname : $objResult->firstname.' '.$objResult->lastname,
-					'vorname'       => $objResult->firstname,
-					'nachname'      => $objResult->lastname,
-					'titel'         => $objResult->titel,
-					'land'          => $objResult->land,
-					'verein'        => $objResult->verein,
-					'ausgeschieden' => $objResult->ausgeschieden,
-					'freilos'       => $objResult->freilos,
-					'dwz'           => $objResult->dwz,
-					'elo'           => $objResult->elo,
-					'nummer'        => $objResult->nummer,
-					'bild'          => $objResult->singleSRC
+					'css'           => $objSpieler->freilos ? 'freilos' : '',
+					'nummer'        => $nummer,
+					'name'          => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getSpielername($objSpieler),
+					'vorname'       => $objSpieler->firstname,
+					'nachname'      => $objSpieler->lastname,
+					'titel'         => $objSpieler->titel,
+					'land'          => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getLand($objSpieler->country),
+					'verein'        => $objSpieler->verein,
+					'ausgeschieden' => $objSpieler->ausgeschieden,
+					'freilos'       => $objSpieler->freilos,
+					'dwz'           => $objSpieler->dwz,
+					'elo'           => $objSpieler->elo,
+					'bild'          => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getFoto($objSpieler, $objTurnier->imageSize_Tabelle)
 				);
 			}
 		}
