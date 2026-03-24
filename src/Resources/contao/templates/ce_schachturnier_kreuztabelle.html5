@@ -7,7 +7,7 @@
 	$anzahl = count($this->tabelle);
 ?>
 
-<table>
+<table class="kreuztabelle">
 <thead>
 	<tr class="kopf">
 		<th class="platz">Pl.</th>

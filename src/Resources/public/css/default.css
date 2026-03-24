@@ -37,9 +37,18 @@
 	text-align: center;
 }
 
+.ce_schachturnier td.result {
+	width: 40px;
+	text-align: center;
+}
+
 .ce_schachturnier td.name {
 	width: 36%;
 	min-width: 200px;
+}
+
+.ce_schachturnier .flag-icon {
+	margin-right: 3px;
 }
 
 .ce_schachturnier td.name img {

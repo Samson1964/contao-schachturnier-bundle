@@ -1,5 +1,14 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.2.2 (2026-03-24)
+
+* Add: CSS-Klassen im Template für die Tabellenart
+* Change: Ausgabe Paarungsliste mit Elo oder/und DWZ -> bisher wurde nur die DWZ ausgegeben
+* Add: Ausgabe von Fotos in Paarungslisten
+* Add: Ausgabe von Ländern in Paarungslisten
+* Add: Ausgabe einer bestimmten Runde der Paarungsliste
+* Add: tl_content.schachturnier_noresults -> Checkbox "Ergebnisse ausblenden"
+
 ## Version 2.2.1 (2026-03-24)
 
 * Add: Fehlende CSS-Klassen im Template ergänzt

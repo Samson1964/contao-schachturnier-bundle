@@ -6,7 +6,7 @@
 	$GLOBALS['TL_CSS'][] = 'bundles/contaoschachturnier/css/default.css';
 ?>
 
-<table>
+<table class="paarungen">
 <thead>
 <?php foreach($this->tabelle as $runde => $arrRunde): ?>
 	<tr class="kopf">
@@ -15,11 +15,11 @@
 	<?php foreach($arrRunde as $brett => $arrBrett): ?>
 		<tr<?php if($arrBrett['css']): ?> class="<?= $arrBrett['css'] ?>"<?php endif; ?>>
 			<td class="board"><?= $brett ?></td>
-			<td class="name"><?php if($arrBrett['weiss_name']) echo $arrBrett['weiss_name']; else echo $arrBrett['weiss_nummer']; ?></td>
-			<td class="rating"><?= $arrBrett['weiss_dwz'] ?></td>
+			<td class="name"><?php if($this->view_land && $arrBrett['weiss_land']): ?><?= $arrBrett['weiss_land'] ?><?php endif; ?><?php if($this->view_foto && $arrBrett['weiss_bild']): ?><?= $arrBrett['weiss_bild'] ?><?php endif; ?><?php if($arrBrett['weiss_name']) echo $arrBrett['weiss_name']; else echo $arrBrett['weiss_nummer']; ?></td>
+			<td class="rating"><?= $arrBrett['weiss_rating'] ?></td>
 			<td class="result"><?= $arrBrett['ergebnis'] ?></td>
-			<td class="name"><?php if($arrBrett['schwarz_name']) echo $arrBrett['schwarz_name']; else echo $arrBrett['schwarz_nummer']; ?></td>
-			<td class="rating"><?= $arrBrett['schwarz_dwz'] ?></td>
+			<td class="name"><?php if($this->view_land && $arrBrett['schwarz_land']): ?><?= $arrBrett['schwarz_land'] ?><?php endif; ?><?php if($this->view_foto && $arrBrett['schwarz_bild']): ?><?= $arrBrett['schwarz_bild'] ?><?php endif; ?><?php if($arrBrett['schwarz_name']) echo $arrBrett['schwarz_name']; else echo $arrBrett['schwarz_nummer']; ?></td>
+			<td class="rating"><?= $arrBrett['schwarz_rating'] ?></td>
 		</tr>
 		<?php if($arrBrett['datum'] || $arrBrett['info']): ?>
 			<tr>

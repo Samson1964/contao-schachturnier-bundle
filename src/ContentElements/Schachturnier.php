@@ -169,18 +169,30 @@ class Schachturnier extends \ContentElement
 							$css = 'freilos';
 						}
 						else $css = '';
+                    
+						// Elo/DWZ einbauen
+						$rating_weiss = '';
+						if(in_array('elo', $view)) $rating_weiss .= '<span title="Elo">'.$spieler[$objResult->whiteName]['elo'].'</span> ';
+						if(in_array('dwz', $view)) $rating_weiss .= '<span title="DWZ">'.$spieler[$objResult->whiteName]['dwz'].'</span> ';
+						$rating_schwarz = '';
+						if(in_array('elo', $view)) $rating_schwarz .= '<span title="Elo">'.$spieler[$objResult->blackName]['elo'].'</span> ';
+						if(in_array('dwz', $view)) $rating_schwarz .= '<span title="DWZ">'.$spieler[$objResult->blackName]['dwz'].'</span> ';
 
 						$paarung[$objResult->round][$objResult->board] = array
 						(
 							'css'            => $css,
 							'weiss_id'       => $objResult->whiteName,
 							'weiss_name'     => $weiss,
-							'weiss_dwz'      => $spieler[$objResult->whiteName]['dwz'],
+							'weiss_rating'   => $rating_weiss,
 							'weiss_nummer'   => $spieler[$objResult->whiteName]['nummer'],
+							'weiss_bild'     => $spieler[$objResult->whiteName]['bild'],
+							'weiss_land'     => $spieler[$objResult->whiteName]['land'],
 							'schwarz_id'     => $objResult->blackName,
 							'schwarz_name'   => $schwarz,
-							'schwarz_dwz'    => $spieler[$objResult->blackName]['dwz'],
+							'schwarz_rating' => $rating_schwarz,
 							'schwarz_nummer' => $spieler[$objResult->blackName]['nummer'],
+							'schwarz_bild'   => $spieler[$objResult->blackName]['bild'],
+							'schwarz_land'   => $spieler[$objResult->blackName]['land'],
 							'datum'          => $objResult->datum ? date('d.m.Y', $objResult->datum) : '',
 							'ergebnis'       => $objResult->result ? $objResult->result : '-',
 							'info'           => $objResult->info,
@@ -190,6 +202,32 @@ class Schachturnier extends \ContentElement
 					//$paarung = self::Spielfreisuche($paarung, $spieler);
 				}
 
+				// Bestimmte Runde soll ausgegeben werden: Paarungen modifizieren und überflüssige Runden entfernen
+				if($this->schachturnier_runde != '')
+				{
+					foreach($paarung as $key => $value)
+					{
+						if($this->schachturnier_runde != $key) unset($paarung[$key]);
+					}
+				}
+
+				// Ergebnisse sollen nicht ausgegeben werden
+				if($this->schachturnier_noresults)
+				{
+					foreach($paarung as $runde => $value)
+					{
+						foreach($paarung[$runde] as $brett => $item)
+						{
+							$paarung[$runde][$brett]['ergebnis'] = '-';
+						}
+					}
+				}
+
+				//echo '<pre>';
+				//print_r($paarung);
+				//echo '</pre>';
+				
+				
 				// Ausgabedaten zusammenbauen
 				$daten = $paarung;
 				$this->Template->termine = $termin;

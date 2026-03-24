@@ -16,6 +16,7 @@ $GLOBALS['TL_LANG']['tl_content']['schachturnier'] = array('Turnier', 'Bitte hie
 $GLOBALS['TL_LANG']['tl_content']['schachturnier_mode'] = array('Modus', 'Modus der Frontend-Ausgabe');
 $GLOBALS['TL_LANG']['tl_content']['schachturnier_runde'] = array('Runde', 'Angabe einer bestimmten Runde. Leer = aktuelle Runde, 0 = vor der ersten Runde, jede andere Zahl = genau diese Runde.');
 $GLOBALS['TL_LANG']['tl_content']['schachturnier_options'] = array('Ausgabe von', 'Ausgabe von zusätzlichen Feldern aktivieren');
+$GLOBALS['TL_LANG']['tl_content']['schachturnier_noresults'] = array('Ergebnisse ausblenden', 'Ergebnisse in dieser Liste ausblenden');
 
 $GLOBALS['TL_LANG']['tl_content']['schachturnier_optionsfelder'] = array
 (
@@ -23,5 +24,5 @@ $GLOBALS['TL_LANG']['tl_content']['schachturnier_optionsfelder'] = array
 	'dwz'    => 'DWZ',
 	'elo'    => 'Elo',
 	'land'   => 'Land',
-	'verein' => 'Verein',
+	'verein' => 'Verein (nicht in Paarungsliste)',
 );

@@ -14,7 +14,7 @@
 /**
  * Palettes
  */
-$GLOBALS['TL_DCA']['tl_content']['palettes']['schachturnier'] = '{type_legend},type,headline;{schachturnier_legend},schachturnier,schachturnier_mode,schachturnier_runde,schachturnier_options;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID;{invisible_legend:hide},invisible,start,stop';
+$GLOBALS['TL_DCA']['tl_content']['palettes']['schachturnier'] = '{type_legend},type,headline;{schachturnier_legend},schachturnier,schachturnier_mode,schachturnier_runde,schachturnier_options,schachturnier_noresults;{template_legend:hide},customTpl;{protected_legend:hide},protected;{expert_legend:hide},guests,cssID;{invisible_legend:hide},invisible,start,stop';
 
 /**
  * Fields
@@ -83,6 +83,21 @@ $GLOBALS['TL_DCA']['tl_content']['fields']['schachturnier_options'] = array
 	'options'                          => &$GLOBALS['TL_LANG']['tl_content']['schachturnier_optionsfelder'],
 	'eval'                             => array('multiple'=>true, 'tl_class'=>'w50'),
 	'sql'                              => "text NULL"
+);
+
+$GLOBALS['TL_DCA']['tl_content']['fields']['schachturnier_noresults'] = array
+(
+	'label'                            => &$GLOBALS['TL_LANG']['tl_content']['schachturnier_noresults'],
+	'exclude'                          => true,
+	'filter'                           => true,
+	'flag'                             => 1,
+	'default'                          => false,
+	'inputType'                        => 'checkbox',
+	'eval'                             => array
+	(                                  
+		'tl_class'                     => 'w50 m12',
+	),                                 
+	'sql'                              => "char(1) NOT NULL default ''"
 );
 
 class tl_content_schachturnier extends Backend

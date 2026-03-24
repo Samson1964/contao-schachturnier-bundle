@@ -6,7 +6,7 @@
 	$GLOBALS['TL_CSS'][] = 'bundles/contaoschachturnier/css/default.css';
 ?>
 
-<table>
+<table class="teilnehmer">
 <thead>
 	<tr class="kopf">
 		<th class="nummer">Nr.</th>
