@@ -11,8 +11,9 @@ class Tabelle
 	var $Turniermodus;
 	var $Bildgroesse;
 
-	public function __construct($id)
+	public function __construct($id, $bildgroesse)
 	{
+		$this->Bildgroesse = $bildgroesse;
 		$this->TurnierID = $id; // Turnier-ID speichern
 		self::LadeSpieler(); // Spielerdaten laden
 		self::LadeErgebnisse(); // Ergebnisdaten laden
@@ -30,7 +31,6 @@ class Tabelle
 		                                     ->execute($id);
 
 		$this->Turniermodus = $objTurnier->type; // Turniermodus speichern
-		$this->Bildgroesse = $objTurnier->imageSize_Tabelle;
 		self::AufAbsteigerMarkieren($objTurnier->aufsteiger, $objTurnier->absteiger);
 		//echo "<pre>";
 		//print_r($this->Kreuztabelle);

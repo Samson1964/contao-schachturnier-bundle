@@ -41,7 +41,7 @@ class Schachturnier extends \ContentElement
 
 		// Inhaltselement-Optionen laden
 		$view = (array)unserialize($this->schachturnier_options);
-		
+
 		switch($this->schachturnier_mode)
 		{
 			case 'subscriber': // Teilnehmerliste
@@ -97,17 +97,17 @@ class Schachturnier extends \ContentElement
 				break;
 
 			case 'cross_nr'   : // Kreuztabelle (nach Nummern)
-				$spieler = self::getSpieler($objTurnier, $objSpieler);
+				$spieler = self::getSpieler($objTurnier, $objSpieler, $objTurnier->imageSize_Tabelle);
 				break;
 
 			case 'cross_rang' : // Kreuztabelle (nach Rang)
 				$this->strTemplate = 'ce_schachturnier_kreuztabelle';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
 
-				$tabelle = new \Schachbulle\ContaoSchachturnierBundle\Classes\Tabelle($this->schachturnier);
+				$tabelle = new \Schachbulle\ContaoSchachturnierBundle\Classes\Tabelle($this->schachturnier, $objTurnier->imageSize_Tabelle);
 
 				// Ergebnisse bei den Spielern hinzufügen
-				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Ergebnisse($objTurnier, $objSpieler);
+				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Ergebnisse($objTurnier, $objSpieler, $this->schachturnier_runde);
 
 				// Sonneborn-Berger-Wertung berechnen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::SonnebornBergerWertung($spieler);
@@ -126,6 +126,10 @@ class Schachturnier extends \ContentElement
 				// Ergebnisse als Kreuztabelle eintragen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Ergebnismatrix($spieler);
 
+				//echo '<pre>';
+				//print_r($spieler);
+				//echo '</pre>';
+
 				// Ausgabedaten zusammenbauen
 				$daten = $spieler;
 				$daten = $tabelle->getTabelle();
@@ -139,7 +143,7 @@ class Schachturnier extends \ContentElement
 				$this->strTemplate = 'ce_schachturnier_paarungen';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
 
-				$spieler = self::getSpieler($objTurnier, $objSpieler);
+				$spieler = self::getSpieler($objTurnier, $objSpieler, $objTurnier->imageSize_Ergebnisse);
 				$termin = self::getTermine();
 
 				// Paarungen laden
@@ -169,7 +173,7 @@ class Schachturnier extends \ContentElement
 							$css = 'freilos';
 						}
 						else $css = '';
-                    
+
 						// Elo/DWZ einbauen
 						$rating_weiss = '';
 						if(in_array('elo', $view)) $rating_weiss .= '<span title="Elo">'.$spieler[$objResult->whiteName]['elo'].'</span> ';
@@ -226,12 +230,12 @@ class Schachturnier extends \ContentElement
 				//echo '<pre>';
 				//print_r($paarung);
 				//echo '</pre>';
-				
-				
+
+
 				// Ausgabedaten zusammenbauen
 				$daten = $paarung;
 				$this->Template->termine = $termin;
-		
+
 				break;
 			default:
 		}
@@ -292,7 +296,7 @@ class Schachturnier extends \ContentElement
 		return $name;
 	}
 
-	function getSpieler($objTurnier, $objSpieler)
+	function getSpieler($objTurnier, $objSpieler, $bildgroesse)
 	{
 		$spieler = array();
 		if($objSpieler->numRows)
@@ -316,7 +320,7 @@ class Schachturnier extends \ContentElement
 					'freilos'       => $objSpieler->freilos,
 					'dwz'           => $objSpieler->dwz,
 					'elo'           => $objSpieler->elo,
-					'bild'          => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getFoto($objSpieler, $objTurnier->imageSize_Tabelle)
+					'bild'          => \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::getFoto($objSpieler, $bildgroesse)
 				);
 			}
 		}
@@ -328,7 +332,7 @@ class Schachturnier extends \ContentElement
 		// Termine laden
 		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_termine WHERE pid = ? AND published = ?')
 		                                     ->execute($this->schachturnier, 1);
-		
+
 		$termin = array();
 		if($objResult->numRows)
 		{
@@ -349,7 +353,7 @@ class Schachturnier extends \ContentElement
 		// Spieler laden
 		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ?')
 		                                     ->execute($this->schachturnier, 1);
-		
+
 		$paarungen = array();
 		if($objResult->numRows)
 		{

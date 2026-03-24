@@ -1,5 +1,10 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.2.3 (2026-03-24)
+
+* Add: Ausgabe von Fotos in Kreuztabellen
+* Add: Klasse Spieler für die Verwaltung aller Spielerdaten plus eventueller Ergebnisse (Rohbau)
+
 ## Version 2.2.2 (2026-03-24)
 
 * Add: CSS-Klassen im Template für die Tabellenart
