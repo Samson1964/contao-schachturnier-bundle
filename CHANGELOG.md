@@ -1,5 +1,9 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.2.1 (2026-03-24)
+
+* Add: Fehlende CSS-Klassen im Template ergänzt
+
 ## Version 2.2.0 (2026-03-20)
 
 * Change: CSS Kopfzeile heller
