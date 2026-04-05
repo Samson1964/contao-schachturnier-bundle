@@ -1,5 +1,11 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.2.4 (2026-04-05)
+
+* Fix: Wenn Rundennummern geändert werden, stimmt die Reihenfolge der Runden in der Paarungsliste nicht mehr -> Schachturnier-Klasse pairings: bei SQL-Abfrage Sortierung nach Runde und Brett hinzugefügt
+* Fix: Kreuztabelle nach x Runden funktioniert nicht -> Tabelle::LadeErgebnisse mit Rundenabfrage ausgebaut
+* Fix: Turnierendedatum wird im Backend als 01.01.1970 angezeigt, wenn leer sein sollte
+
 ## Version 2.2.3 (2026-03-24)
 
 * Add: Ausgabe von Fotos in Kreuztabellen

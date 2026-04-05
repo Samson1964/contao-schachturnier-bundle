@@ -375,7 +375,8 @@ class tl_schachturnier extends \Backend
 	 */
 	public function loadDate($value)
 	{
-		return strtotime(date('Y-m-d', $value) . ' 00:00:00');
+		if($value) return strtotime(date('Y-m-d', $value) . ' 00:00:00');
+		else return '';
 	}
 
 }

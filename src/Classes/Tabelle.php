@@ -11,12 +11,12 @@ class Tabelle
 	var $Turniermodus;
 	var $Bildgroesse;
 
-	public function __construct($id, $bildgroesse)
+	public function __construct($id, $bildgroesse, $runde)
 	{
 		$this->Bildgroesse = $bildgroesse;
 		$this->TurnierID = $id; // Turnier-ID speichern
 		self::LadeSpieler(); // Spielerdaten laden
-		self::LadeErgebnisse(); // Ergebnisdaten laden
+		self::LadeErgebnisse($runde); // Ergebnisdaten laden
 		//self::ZeigeTabelle(); // Tabelle verkürzt anzeigen
 		self::SonnebornBerger(); // Sonneborn-Berger-Wertung berechnen
 		self::LoescheFreilos(); // Freilos in der Tabelle löschen
@@ -116,10 +116,12 @@ class Tabelle
 	 * @retun array: Modifiziertes Tabelle-Array
 	 * ---------------------------------------------------------------------------------------------
 	 **********************************************************************************************/
-	public function LadeErgebnisse()
+	public function LadeErgebnisse($Runde = '')
 	{
+		echo 'Runde:'.$Runde;
+		
 		// Paarungen laden
-		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ?')
+		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ? ORDER BY round ASC, board ASC')
 		                                     ->execute($this->TurnierID, 1);
 		if($objResult->numRows)
 		{
@@ -137,46 +139,116 @@ class Tabelle
 					switch($objResult->result)
 					{
 						case '1:0':
-							$weiss_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
-							$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
-							$weiss_runde = ['ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName];
-							$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName];
+							if(($Runde != '' && $objResult->round <= $Runde) || $Runde == '')
+							{
+								$weiss_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+								$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->whiteName];
+							}
+							else
+							{
+								$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->whiteName];
+							}
 							break;
 						case '+:-':
-							$weiss_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
-							$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
-							$weiss_runde = ['ergebnis' => 1, 'anzeige' => '+', 'gegner' => $objResult->blackName];
-							$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->whiteName];
+							if(($Runde != '' && $objResult->round <= $Runde) || $Runde == '')
+							{
+								$weiss_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+								$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => 1, 'anzeige' => '+', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->whiteName];
+							}
+							else
+							{
+								$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->whiteName];
+							}
 							break;
 						case '0:1':
-							$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
-							$schwarz_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
-							$weiss_runde = ['ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName];
-							$schwarz_runde = ['ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName];
+							if(($Runde != '' && $objResult->round <= $Runde) || $Runde == '')
+							{
+								$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+								$weiss_runde = ['ergebnis' => 0, 'anzeige' => '0', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => 1, 'anzeige' => '1', 'gegner' => $objResult->whiteName];
+							}
+							else
+							{
+								$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->whiteName];
+							}
 							break;
 						case '-:+':
-							$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
-							$schwarz_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
-							$weiss_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->blackName];
-							$schwarz_runde = ['ergebnis' => 1, 'anzeige' => '+', 'gegner' => $objResult->whiteName];
+							if(($Runde != '' && $objResult->round <= $Runde) || $Runde == '')
+							{
+								$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 1, '2punkte' => 1, '3punkte' => 3, 'siege' => 1];
+								$weiss_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => 1, 'anzeige' => '+', 'gegner' => $objResult->whiteName];
+							}
+							else
+							{
+								$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->whiteName];
+							}
 							break;
 						case '½:½':
-							$weiss_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
-							$schwarz_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
-							$weiss_runde = ['ergebnis' => .5, 'anzeige' => '½', 'gegner' => $objResult->blackName];
-							$schwarz_runde = ['ergebnis' => .5, 'anzeige' => '½', 'gegner' => $objResult->whiteName];
+							if(($Runde != '' && $objResult->round <= $Runde) || $Runde == '')
+							{
+								$weiss_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => .5, 'anzeige' => '½', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => .5, 'anzeige' => '½', 'gegner' => $objResult->whiteName];
+							}
+							else
+							{
+								$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->whiteName];
+							}
 							break;
 						case '=:=':
-							$weiss_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
-							$schwarz_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
-							$weiss_runde = ['ergebnis' => .5, 'anzeige' => '=', 'gegner' => $objResult->blackName];
-							$schwarz_runde = ['ergebnis' => .5, 'anzeige' => '=', 'gegner' => $objResult->whiteName];
+							if(($Runde != '' && $objResult->round <= $Runde) || $Runde == '')
+							{
+								$weiss_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 1, '2punkte' => .5, '3punkte' => 1, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => .5, 'anzeige' => '=', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => .5, 'anzeige' => '=', 'gegner' => $objResult->whiteName];
+							}
+							else
+							{
+								$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->whiteName];
+							}
 							break;
 						case '-:-':
-							$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
-							$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
-							$weiss_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->blackName];
-							$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->whiteName];
+							if(($Runde != '' && $objResult->round <= $Runde) || $Runde == '')
+							{
+								$weiss_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 1, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => 0, 'anzeige' => '-', 'gegner' => $objResult->whiteName];
+							}
+							else
+							{
+								$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$schwarz_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
+								$weiss_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->blackName];
+								$schwarz_runde = ['ergebnis' => false, 'anzeige' => '', 'gegner' => $objResult->whiteName];
+							}
 							break;
 						default:
 							$weiss_partie = ['spiele' => 0, '2punkte' => 0, '3punkte' => 0, 'siege' => 0];
@@ -225,7 +297,7 @@ class Tabelle
 							}
 						}
 					}
-
+                    
 					// Gegner ist ausgeschieden
 					if($this->Tabelle[$objResult->blackName]['ausgeschieden'])
 					{
@@ -264,7 +336,7 @@ class Tabelle
 								}
 							}
 						}
-					}
+					} 
 					
 					// Ergebnis in Tabelle beim Spieler (Weiß) eintragen
 					$this->Tabelle[$objResult->whiteName]['spiele'] += $weiss_partie['spiele'];

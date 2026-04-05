@@ -104,7 +104,7 @@ class Schachturnier extends \ContentElement
 				$this->strTemplate = 'ce_schachturnier_kreuztabelle';
 				$this->Template = new \FrontendTemplate($this->strTemplate);
 
-				$tabelle = new \Schachbulle\ContaoSchachturnierBundle\Classes\Tabelle($this->schachturnier, $objTurnier->imageSize_Tabelle);
+				$tabelle = new \Schachbulle\ContaoSchachturnierBundle\Classes\Tabelle($this->schachturnier, $objTurnier->imageSize_Tabelle, $this->schachturnier_runde);
 
 				// Ergebnisse bei den Spielern hinzufügen
 				$spieler = \Schachbulle\ContaoSchachturnierBundle\Classes\Helper::Ergebnisse($objTurnier, $objSpieler, $this->schachturnier_runde);
@@ -147,7 +147,7 @@ class Schachturnier extends \ContentElement
 				$termin = self::getTermine();
 
 				// Paarungen laden
-				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ?')
+				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ? ORDER BY round ASC, board ASC')
 				                                     ->execute($this->schachturnier, 1);
 				$paarung = array();
 				if($objResult->numRows)
