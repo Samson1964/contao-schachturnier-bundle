@@ -1,5 +1,9 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.2.5 (2026-04-05)
+
+* Fix: Debug-Ausgabe entfernt
+
 ## Version 2.2.4 (2026-04-05)
 
 * Fix: Wenn Rundennummern geändert werden, stimmt die Reihenfolge der Runden in der Paarungsliste nicht mehr -> Schachturnier-Klasse pairings: bei SQL-Abfrage Sortierung nach Runde und Brett hinzugefügt

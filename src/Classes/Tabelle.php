@@ -118,8 +118,6 @@ class Tabelle
 	 **********************************************************************************************/
 	public function LadeErgebnisse($Runde = '')
 	{
-		echo 'Runde:'.$Runde;
-		
 		// Paarungen laden
 		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ? ORDER BY round ASC, board ASC')
 		                                     ->execute($this->TurnierID, 1);
