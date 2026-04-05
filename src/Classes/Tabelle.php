@@ -119,7 +119,7 @@ class Tabelle
 	public function LadeErgebnisse($Runde = '')
 	{
 		// Paarungen laden
-		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ? ORDER BY round ASC, board ASC')
+		$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ? ORDER BY round+0 ASC, board+0 ASC')
 		                                     ->execute($this->TurnierID, 1);
 		if($objResult->numRows)
 		{

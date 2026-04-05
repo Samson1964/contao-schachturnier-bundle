@@ -147,7 +147,7 @@ class Schachturnier extends \ContentElement
 				$termin = self::getTermine();
 
 				// Paarungen laden
-				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ? ORDER BY round ASC, board ASC')
+				$objResult = \Database::getInstance()->prepare('SELECT * FROM tl_schachturnier_partien WHERE pid = ? AND published = ? ORDER BY round+0 ASC, board+0 ASC')
 				                                     ->execute($this->schachturnier, 1);
 				$paarung = array();
 				if($objResult->numRows)

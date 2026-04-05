@@ -1,5 +1,9 @@
 # Schachturnier-Bundle Changelog
 
+## Version 2.2.6 (2026-04-05)
+
+* Fix: Sortierung nach Runde war immer noch falsch: 1,10,11,2 statt 1,2,10,11 
+
 ## Version 2.2.5 (2026-04-05)
 
 * Fix: Debug-Ausgabe entfernt
